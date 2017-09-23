@@ -1,0 +1,126 @@
+<h3><?=$data['article_page']['title'] ?></h3><br/>
+
+
+<?php if ($data['article_page']['date_published']) echo $data['article_page']['date_published']; ?>
+&nbsp;&nbsp;&nbsp;
+<b>Author : </b>
+<?php if ($data['article_page']['author']) {echo $data['article_page']['author'];} ?>
+&nbsp;&nbsp;
+<br/><br/>
+
+<?php if ($data['article_images']) {
+        foreach( $data['article_images'] as $img_name) { ?>
+    <img src="/webroot/img/articles/<?= $img_name['full_name'] ?>" alt="" style="width: 24%; display:inline-block;">
+<?php } } ?>
+
+<br/><br/>
+
+<?php if ($data['article_page']['text']) echo $data['article_page']['text']; ?>
+
+<br/><br/>
+
+<p>
+    <b>Online: <span id="online">0</span></b>
+</p>
+<p>
+    <b>Visited: <span id="visited">0</span></b>
+</p>
+
+<p>
+    <b>Tags: </b>
+    <?php
+            if ( $data['article_page']['tags']) {
+                foreach( $data['article_page']['tags'] as $tag){
+                    echo ' <b><a href="/articles/filter/?tags[]=' . $tag . '" >' . $tag . ' </a></b> &nbsp;' ;
+            }
+        }
+    ?>
+</p>
+
+
+
+
+
+<hr>
+<h4>Комментарии</h4>
+<hr>
+
+
+<div id="comments" style="padding: 5px 20px; ">
+
+
+    <div id="0"  class="comment" >
+        <?php if (Session::get('role')) {  ?>
+        <p>Вы можете оставить свой комментарий:</p>
+        <textarea name="comm_input" class="comm_input"  style="display: block; width: 100%; padding:10px; margin: 5px 0px 0px 0px;"></textarea>
+        <span class="comm_send_btn btn btn-sm btn-default" onclick=""  style="display:inline-block; ;">Отправить</span>
+
+        <?php  } else { ?>
+        <p>Комментарии могут оставлять только зарегистрированные пользователи.</p>
+        <?php  }  ?>
+
+    </div>
+
+
+
+    <div id="comment_base" data_parent_id=""  class="comment"  align="left"
+    style="padding: 10px 0px 10px 0px ; display: none; ">
+
+        <b><span class="comm_login" style="margin: 0px 10px;">  </span></b>
+        <span class="comm_date"  style="margin: 0px 10px;">  </span>
+
+        <!--<span class="id_parent" >  </span>-->
+        <!--<span class="id" >  </span>-->
+
+        <div name="" class="comm_text"  style="width: 100%; background-color: #fff; border: 1px solid #aaa; padding:10px;">   </div>
+
+        <?php if (Session::get('role')) {  ?>
+                <textarea name="comm_input" class="comm_input"  style="display: none; width: calc(100% - 30px); padding:10px; margin: 5px 0px 0px 30px;"></textarea>
+
+                <span class="comm_send_btn btn btn-sm btn-default" onclick=""  style="display: none; margin-left: 30px;">Отправить</span>
+                <span class="comm_reply_btn btn btn-sm btn-default" onclick="" style="display: inline-block;">Оставить комментарий</span>
+
+        <?php  } ?>
+
+        <span class="comm_like_text "  style="margin: 0px 5px 0px 20px;"> Понравилось: </span>
+        <span class="comm_like_count"  style="margin: 0px 5px;">  </span>
+        <?php  if (Session::get('role')) {  ?>
+          <span class="comm_like_btn  btn btn-sm btn-default"   style="margin: 0px 5px;"> + </span>
+        <?php  } ?>
+
+        <!--<hr>-->
+
+    </div>
+
+
+    <div    id="user_id"  data_user_id="<?= $data['user']['id'] ?>" style="display: none;" ></div>
+    <div    id="user_login"  data_user_login="<?= $data['user']['login'] ?>" style="display: none;" ></div>
+    <div    id="article_id"  data_article_id="<?= $data['article_page']['id'] ?>" style="display: none;" ></div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
