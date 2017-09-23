@@ -14,8 +14,9 @@ class Article_view extends Model
     public function getCommentsByArticleId( $id_article = 1)
     {
         $id = (int)$id;
+        $sql = "select  c.* , u.* , count(like_user) as like_count from comments c JOIN users u ON id = id_user AND id_article = '{$id_article}' 
+                          LEFT JOIN likes ON id_comment = like_comment GROUP BY c.id_comment ";
         
-        $sql = "select * from comments JOIN users ON id = id_user AND id_article = '{$id_article}'  ";
         $result = $this->db->query($sql);
         return $result ;
     }
@@ -27,6 +28,29 @@ class Article_view extends Model
         $sql = "select * from comments where id_comment = '{$id_comment}'  ";
         $result = $this->db->query($sql);
         return isset($result[0]) ? $result[0] : null ;
+    }
+
+    public function getLike( $id_comment, $id_user )
+    {
+        $id_comment = (int)$id_comment;
+        $id_user = (int)$id_user;
+
+        $sql = "select * from likes where like_comment = '{$id_comment}' and  like_user = '{$id_user}' ";
+        $result = $this->db->query($sql);
+        return isset($result[0]) ? $result[0] : null ;
+    }
+
+    public function addLike( $id_comment, $id_user )
+    {
+        $id_comment = (int)$id_comment;
+        $id_user = (int)$id_user;
+
+        $sql = " insert into likes
+                  set like_comment = '{$id_comment}',
+                      like_user = '{$id_user}'
+               ";
+        $result = $this->db->query($sql);
+        return $result ;
     }
 
 

@@ -46,18 +46,15 @@ class Article_pageController extends Controller
     }
 
 
-
     public function comments_get_ajax()
     {
         $comments = $this->model->getCommentsByArticleId($this->params[0]);
         $comments_line = structure_to_line($comments, 0);
 
         foreach ($comments_line as $key => $row) {
-            if ($row['like_ok'] != '') {
+            if (!$row['date']) {
                 $users_like = explode(',', $row['like_ok']);
-                $comments_line[$key]['like_ok'] = count($users_like);
-            } else {
-                $comments_line[$key]['like_ok'] = '0';
+                $comments_line[$key]['date'] = '';
             }
         }
 
@@ -71,7 +68,6 @@ class Article_pageController extends Controller
             $result = $this->model->comment_save($_POST);
 
             $this->comments_get_ajax();
-
         }
         die;
 
@@ -79,29 +75,17 @@ class Article_pageController extends Controller
 
     public function comment_like_ajax()
     {
-        if (isset($this->params[0])) {
-            $comment = $this->model->getCommentById($this->params[0]);
+        if (isset($this->params[0]) && isset($this->params[1])) {
+            $like = $this->model->getLike($this->params[0], $this->params[1]);
 
-            if ($comment['like_ok']) {
-                $users_like = explode(',', $comment['like_ok']);
+            if (!$like) {
+                $result = $this->model->addLike($this->params[0], $this->params[1]);
 
-                if ( is_array($users_like) && !in_array($this->params[1], $users_like)) {
-                    $users_like[] = $this->params[1];
-                    $users_like_str = implode(',', $users_like);
-                    $comment['like_ok'] = $users_like_str ? $users_like_str : $comment['like_ok'] ;
-                    $result = $this->model->comment_save($comment, $this->params[0]);
+                if ($result) {
                     echo 1;
-                } else {
-                    echo 0;
+                    die;
                 }
-
-            } else {
-                $comment['like_ok'] = $this->params[1];
-                $result = $this->model->comment_save($comment, $this->params[0]);
-                echo 1;
             }
-        } else {
-            echo 0;
         }
         die;
     }

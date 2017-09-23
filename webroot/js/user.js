@@ -65,11 +65,11 @@ function commentsGet() {
             $comm_clone.attr('data_base_element', 'no_base_element');
             $comm_clone.css('display', 'block');
             $comm_clone.css('padding-left', 30 * $row['nested_level'] + 'px');
-            // $comm_clone.attr('id', $row['id_comment']);
-            // $comm_clone.attr('data_parent_id', $row['id_parent_comment']);
+            $comm_clone.attr('id', $row['id_comment']);
+            $comm_clone.attr('data_parent_id', $row['id_parent_comment']);
             $comm_clone.find('.comm_login').text($row['login']);
             $comm_clone.find('.comm_date').text($row['date']);
-            $comm_clone.find('.comm_like_count').text($row['like_ok']);
+            $comm_clone.find('.comm_like_count').text($row['like_count']);
             $comm_clone.find('.comm_text').text($row['text']);
             $comm_clone.find('.comm_input').text($row['nested_level']);
 
