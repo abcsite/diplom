@@ -1,58 +1,69 @@
 <?php
 
-class CategoriesController extends Controller {
+class CategoriesController extends Controller
+{
 
-    public  function __construct($data = array()){
+    public function __construct($data = array())
+    {
         parent::__construct($data);
         $this->model = new Category();
     }
 
-    public  function admin_index(){
-        $this->data['categories'] = $this->model->getList();    
+    public function admin_index()
+    {
+//        $this->data['categories'] = $this->model->getList();
     }
 
-    public function admin_add(){
-        if ( $_POST ) {
+    public function admin_add()
+    {
+        if ($_POST && $_POST['category_name'] != '') {
             $result = $this->model->save($_POST);
-            if ( $result) {
+            if ($result) {
                 Session::setFlash('Category was saved.');
-            } else {
-                Session::setFlash('Error.');
-            }
-            Router::redirect('/admin/categories/');
-        }
-    }
-
-//    public function admin_edit(){
-//
-//        if ( $_POST ) {
-//            $id = isset($_POST['id']) ? $_POST['id'] : null ;
-//            $result = $this->model->save($_POST, $id);
-//            if ( $result) {
-//                Session::setFlash('Page was saved.');
-//            } else {
-//                Session::setFlash('Error.');
-//            }
-//            Router::redirect('/admin/pages/');
-//        }
-//
-//        if ( isset($this->params[0]) ) {
-//            $this->data['page'] = $this->model->getById($this->params[0]);
-//        } else {
-//            Session::setFlash('Wrong page id.');
-//            Router::redirect('/admin/pages/');
-//        }
-//    }
-
-    public function admin_delete() {
-        if ( isset( $this->params[0])) {
-            $result = $this->model->delete($this->params[0]);
-            if ( $result) {
-                Session::setFlash('Category was deleted.');
             } else {
                 Session::setFlash('Error.');
             }
         }
         Router::redirect('/admin/categories/');
-   }
+    }
+
+
+    public function admin_categories_get_ajax()
+    {
+        $categories = $this->model->getList();
+        $categories_line = structure_to_line($categories, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id' ]);
+        echo(json_encode($categories_line));
+        die;
+    }
+
+
+    public function admin_category_add_ajax()
+    {
+        if (isset($_POST['category_name']) && isset($_POST['parent_id'])) {
+            $result = $this->model->save($_POST, $_POST['id']);
+
+            $this->admin_categories_get_ajax();
+        }
+        die;
+    }
+
+    public function admin_category_delete_ajax()
+    {
+        if (isset($this->params[0])) {
+            $categories = $this->model->getList();
+            $childs_categories_to_delete = structure_to_line($categories, $options = ['begin_id' => $this->params[0], 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id' ]);
+
+            $id_arr = [  (int) $this->params[0] ];
+            foreach ($childs_categories_to_delete as $child) {
+                $id_arr[] = (int) $child['id'];
+            }
+
+            $result = $this->model->delete($id_arr);
+
+            $this->admin_categories_get_ajax();
+        }
+        die;
+    }
+
+
 }

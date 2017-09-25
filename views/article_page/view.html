@@ -69,6 +69,15 @@
         <b><span class="comm_login" style="margin: 0px 10px;">  </span></b>
         <span class="comm_date"  style="margin: 0px 10px;">  </span>
 
+        <?php  if (Session::get('role')) {  ?>
+        <!--<span class="comm_like_btn  btn btn-sm btn-default"   style="margin: 0px 5px;"><b> + </b></span>-->
+            <img src="/webroot/img/icons/thumb_up.png" alt="" class="comm_like_btn  btn btn-sm "   style="margin: 0px 0px 0px 20px;" >
+        <?php  } else { ?>
+             <img src="/webroot/img/icons/thumb_up.png" alt="" class=""   style="margin: 0px 0px 0px 20px;" >
+        <?php  }  ?>
+
+        <span class="comm_like_count"  style="margin: 0px 20px 0px 0px;">  </span>
+
         <span class="id_parent" >  </span>
         <span class="id" >  </span>
 
@@ -82,11 +91,8 @@
 
         <?php  } ?>
 
-        <span class="comm_like_text "  style="margin: 0px 5px 0px 20px;"> Понравилось: </span>
-        <span class="comm_like_count"  style="margin: 0px 5px;">  </span>
-        <?php  if (Session::get('role')) {  ?>
-          <span class="comm_like_btn  btn btn-sm btn-default"   style="margin: 0px 5px;"><b> + </b></span>
-        <?php  } ?>
+        <!--<img src="/webroot/img/icons/thumb_up.png" alt="" class=""   style="margin: 0px 5px 0px 40px;" >-->
+        <!--<span class="comm_like_text "  style="margin: 0px 5px 0px 20px;"> Понравилось: </span>-->
 
         <!--<hr>-->
 

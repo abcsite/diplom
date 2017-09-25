@@ -1,24 +1,28 @@
 <h3>Categories</h3><br/>
 
-<form method="post" action="/admin/categories/add/" style="width: 400px;">
-    <input type="text" name="category_name" value="" class="form-control"  style="width: 300px; display: inline-block;" />
-    <input type="submit" class="btn btn-success" value="Add"  style="width: 70px; display: inline-block;" />
+<form method="post" action="/admin/categories/add/" style="width: 900px;">
+    <input type="text" name="category_name" value="" class="form-control"  style="width: 500px; display: inline-block;" />
+    <input type="submit" class="btn btn-default" value="Добавить категорию"  style=" display: inline-block;" />
 </form>
 
 <br/>
 <?php   ?>
 
-<table class="table table-striped" style="width: 400px;">
-    <?php foreach( $data['categories'] as $category_data) { ?>
-    <tr>
-        <td><b><?= $category_data['category_name'] ?></b></td>
-        <td align="right">
-            <a href="/admin/categories/delete/<?= $category_data['id'] ?>" onclick="return confirmDelete();">
-                <button class="btn btn-sm btn-warning">delete</button>
-            </a>
+<table  id="categories" class="table table-default" style="width: 900px;">
+    <tr  id="category_base" data_parent_id=""  class="category" style="display: none; width: 900px; "  >
+        <td class="categ_id"  style="vertical-align:middle; width: 50px; "></td>
+        <td class="categ_text"  style="vertical-align:middle; width: 450px; "></td>
+        <td align="right"  style="vertical-align:middle; width: 500px; ">
+            <button class="categ_add_subcat  btn btn-sm btn-link">добавить подкатегорию</button>
+            <button class="categ_edit  btn btn-sm btn-link">редактировать</button>
+            <button class="categ_delete  btn btn-sm btn-link">удалить</button>
+            <div class="categ_window"  style=" display: none; position: fixed; left: 30%; top: 40%; width: 40%; padding: 30px; background-color: rgba(0,0,0,0.3); text-align: left; ">
+                <input type="text" value=""  class="categ_input"  style="width: 100%; padding:5px; ">
+                <button class="categ_send_subcat  btn btn-sm btn-default">сохранить</button>
+                <button class="categ_close_window  btn btn-sm btn-default">отмена</button>
+            </div>
         </td>
     </tr>
-    <?php } ?>
 </table>
 
 

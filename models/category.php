@@ -17,12 +17,14 @@ class Category extends Model{
         }
 
         $id = (int)$id;
+        $parent_id = $data['parent_id'] ? (int)$data['parent_id'] : '0';
         $category_name = $this->db->escape($data['category_name']);
 
         if ( !$id) {  // Add new record
             $sql = "
                 insert into categories
-                  set category_name = '{$category_name}'
+                  set parent_id = '{$parent_id}',
+                     category_name = '{$category_name}'
             ";
         } else {  // Update existing record
             $sql = "
@@ -35,9 +37,12 @@ class Category extends Model{
         return $this->db->query($sql);
     }
 
-    public function delete($id) {
-        $id = (int)$id;
-        $sql = "delete from categories where id = {$id}";
+    public function delete($id_arr) {
+        foreach ($id_arr as $key => $id) {
+            $id_arr[$key] = (int) $id;
+        }
+        $id_str = implode(',', $id_arr);
+        $sql = "delete from categories where id IN ({$id_str}) ";
         return $this->db->query($sql);
 
     }

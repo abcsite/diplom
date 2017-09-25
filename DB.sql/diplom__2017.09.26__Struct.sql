@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 19 2017 г., 22:36
+-- Время создания: Сен 26 2017 г., 01:32
 -- Версия сервера: 5.7.16
 -- Версия PHP: 5.6.29
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `modul-4`
+-- База данных: `diplom`
 --
 
 -- --------------------------------------------------------
@@ -64,8 +64,8 @@ CREATE TABLE `banners` (
 
 CREATE TABLE `categories` (
   `id` int(10) UNSIGNED NOT NULL,
-  `category_name` varchar(255) NOT NULL,
   `parent_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `category_name` varchar(255) NOT NULL,
   `displayed` tinyint(3) UNSIGNED NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -88,12 +88,13 @@ CREATE TABLE `categories_of_article` (
 
 CREATE TABLE `comments` (
   `id_comment` int(10) UNSIGNED NOT NULL,
+  `id_parent_comment` int(10) UNSIGNED DEFAULT NULL,
+  `nested_level` int(11) NOT NULL DEFAULT '0',
   `id_article` int(10) UNSIGNED DEFAULT NULL,
   `id_user` int(10) UNSIGNED DEFAULT NULL,
-  `id_parent_comment` int(10) UNSIGNED DEFAULT NULL,
   `text` text,
   `date` datetime DEFAULT NULL,
-  `like_ok` int(10) UNSIGNED DEFAULT NULL,
+  `like_ok` text,
   `dislike` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -110,6 +111,17 @@ CREATE TABLE `images_of_article` (
   `name` varchar(255) NOT NULL,
   `full_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `likes`
+--
+
+CREATE TABLE `likes` (
+  `like_comment` int(10) UNSIGNED NOT NULL,
+  `like_user` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
 
@@ -253,12 +265,12 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT для таблицы `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT для таблицы `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_comment` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
 --
 -- AUTO_INCREMENT для таблицы `images_of_article`
 --
@@ -283,7 +295,7 @@ ALTER TABLE `top_menu`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` smallint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` smallint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

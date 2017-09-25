@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 18 2017 г., 12:06
+-- Время создания: Сен 26 2017 г., 01:31
 -- Версия сервера: 5.7.16
 -- Версия PHP: 5.6.29
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `modul-4`
+-- База данных: `diplom`
 --
 
 -- --------------------------------------------------------
@@ -103,8 +103,8 @@ CREATE TABLE `banners` (
 
 CREATE TABLE `categories` (
   `id` int(10) UNSIGNED NOT NULL,
-  `category_name` varchar(255) NOT NULL,
   `parent_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `category_name` varchar(255) NOT NULL,
   `displayed` tinyint(3) UNSIGNED NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -112,14 +112,15 @@ CREATE TABLE `categories` (
 -- Дамп данных таблицы `categories`
 --
 
-INSERT INTO `categories` (`id`, `category_name`, `parent_id`, `displayed`) VALUES
-(5, 'Politics\r\n', 0, 1),
-(6, 'Analytics', 0, 1),
-(7, 'Economics', 0, 1),
-(8, 'Culture', 0, 1),
-(9, 'Society', 0, 1),
-(13, 'Showbiz', 0, 1),
-(14, 'Science', 0, 1);
+INSERT INTO `categories` (`id`, `parent_id`, `category_name`, `displayed`) VALUES
+(5, 0, 'Politics\r\n', 1),
+(6, 0, 'Analytics', 1),
+(7, 0, 'Economics', 1),
+(8, 0, 'Culture', 1),
+(9, 0, 'Society', 1),
+(13, 0, 'Showbiz', 1),
+(14, 0, 'Science', 1),
+(20, 0, 'sss', 1);
 
 -- --------------------------------------------------------
 
@@ -268,14 +269,55 @@ INSERT INTO `categories_of_article` (`id_article`, `id_category`) VALUES
 
 CREATE TABLE `comments` (
   `id_comment` int(10) UNSIGNED NOT NULL,
-  `id_article` int(10) UNSIGNED NOT NULL,
-  `id_user` int(10) UNSIGNED NOT NULL,
-  `id_parent_comment` int(10) UNSIGNED NOT NULL,
-  `text` text NOT NULL,
-  `date` datetime NOT NULL,
-  `like` int(10) UNSIGNED NOT NULL,
-  `dislike` int(10) UNSIGNED NOT NULL
+  `id_parent_comment` int(10) UNSIGNED DEFAULT NULL,
+  `nested_level` int(11) NOT NULL DEFAULT '0',
+  `id_article` int(10) UNSIGNED DEFAULT NULL,
+  `id_user` int(10) UNSIGNED DEFAULT NULL,
+  `text` text,
+  `date` datetime DEFAULT NULL,
+  `like_ok` text,
+  `dislike` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `comments`
+--
+
+INSERT INTO `comments` (`id_comment`, `id_parent_comment`, `nested_level`, `id_article`, `id_user`, `text`, `date`, `like_ok`, `dislike`) VALUES
+(2, 1, 0, 128, 1, 'sdfsdbs', NULL, '', NULL),
+(3, 7, 0, 128, 2, 'sbfsbsfbs', NULL, '3', NULL),
+(4, 4, 0, 128, 1, 'sfb', NULL, '', NULL),
+(5, 6, 0, 128, 2, 'sfbsgfbs', NULL, '', NULL),
+(7, 0, 0, 128, 1, 'sgbsg', NULL, '3,2', NULL),
+(8, 1, 0, 128, 1, 'sdfsdbs', NULL, '', NULL),
+(9, 7, 0, 128, 2, 'sbfsbsfbs', NULL, '3', NULL),
+(10, 4, 0, 128, 1, 'sfb', NULL, '', NULL),
+(11, 6, 0, 128, 2, 'sfbsgfbs', NULL, '', NULL),
+(12, 0, 0, 128, 1, 'sgbsg', NULL, '3', NULL),
+(15, 4, 0, 128, 1, NULL, NULL, '', NULL),
+(17, 7, 0, 128, 2, NULL, NULL, '', NULL),
+(20, 9, 0, 128, 1, 'dgfhdgfhd gfdgf dfgdghd', NULL, '3', NULL),
+(21, 9, 0, 128, 2, 'gbe  egbegb', NULL, '2', NULL),
+(22, 0, 0, 128, 2, '555', '2017-09-22 03:35:17', '2', NULL),
+(23, 0, 0, 128, 2, 'gbsfgbsfg', '2017-09-22 03:37:34', '2,3', NULL),
+(128, 23, 0, 128, 2, '0', '2017-09-22 22:21:32', '3,2', NULL),
+(154, 17, 0, 128, 2, '999999', '2017-09-23 02:29:29', '3,2', NULL),
+(155, 9, 0, 128, 2, '000000', '2017-09-23 02:32:06', '2,3', NULL),
+(156, 21, 0, 128, 2, '2', '2017-09-23 03:57:50', '', NULL),
+(157, 155, 0, 128, 2, '2', '2017-09-23 03:57:54', '', NULL),
+(158, 17, 0, 128, 2, '1', '2017-09-23 03:58:01', '', NULL),
+(159, 154, 0, 128, 2, '2', '2017-09-23 03:58:03', '', NULL),
+(160, 128, 0, 128, 2, '12345', '2017-09-23 04:06:50', '', NULL),
+(161, 22, 0, 128, 2, '54321', '2017-09-23 04:07:36', '2', NULL),
+(162, 22, 0, 128, 2, '54321', '2017-09-23 04:07:46', '', NULL),
+(163, 161, 0, 128, 2, '54321', '2017-09-23 04:07:53', '', NULL),
+(164, 163, 0, 128, 2, '2', '2017-09-23 04:08:27', '2', NULL),
+(165, 0, 0, 128, 2, 'gggggggggggggggggggggg', '2017-09-23 04:31:12', '', NULL),
+(166, 21, 0, 128, 2, '2', '2017-09-23 04:32:23', '', NULL),
+(167, 0, 0, 128, 2, 'uuuuuuuuu', '2017-09-23 04:33:41', '', NULL),
+(168, 20, 0, 128, 2, 'nnnnnnnn', '2017-09-23 04:34:19', '', NULL),
+(169, 157, 0, 128, 2, 'ssssssssss', '2017-09-23 23:58:43', '', NULL),
+(170, 0, 0, 128, 2, 'wwwww', '2017-09-24 00:03:41', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -376,6 +418,40 @@ INSERT INTO `images_of_article` (`id`, `id_article`, `num`, `name`, `full_name`)
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `likes`
+--
+
+CREATE TABLE `likes` (
+  `like_comment` int(10) UNSIGNED NOT NULL,
+  `like_user` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+--
+-- Дамп данных таблицы `likes`
+--
+
+INSERT INTO `likes` (`like_comment`, `like_user`) VALUES
+(3, 1),
+(7, 2),
+(168, 2),
+(156, 2),
+(21, 2),
+(20, 2),
+(166, 2),
+(169, 2),
+(9, 2),
+(155, 2),
+(159, 2),
+(154, 2),
+(17, 2),
+(157, 2),
+(3, 2),
+(168, 1),
+(158, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `messages`
 --
 
@@ -453,7 +529,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `email`, `role`, `password`, `is_active`) VALUES
-(1, 'admin', 'admin@your-site.com', 'admin', '44ca5fa5c67e434b9e779c5febc46f06', 1);
+(1, 'admin', 'admin@your-site.com', 'admin', '44ca5fa5c67e434b9e779c5febc46f06', 1),
+(2, '11111', 'a@a.a', 'user', '1854830800a115a705b59715555c11b6', 1),
+(3, '22222', 'd@d.d', 'user', '67d7cbe6559cc242c411fdd157d9b69d', 1);
 
 --
 -- Индексы сохранённых таблиц
@@ -531,12 +609,12 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT для таблицы `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 --
 -- AUTO_INCREMENT для таблицы `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id_comment` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id_comment` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
 --
 -- AUTO_INCREMENT для таблицы `images_of_article`
 --
@@ -561,7 +639,7 @@ ALTER TABLE `top_menu`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` smallint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` smallint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

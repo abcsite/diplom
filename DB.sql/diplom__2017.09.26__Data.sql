@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 19 2017 г., 22:35
+-- Время создания: Сен 26 2017 г., 01:34
 -- Версия сервера: 5.7.16
 -- Версия PHP: 5.6.29
 
@@ -17,27 +17,8 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `modul-4`
+-- База данных: `diplom`
 --
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `articles`
---
-
-CREATE TABLE `articles` (
-  `id` int(5) UNSIGNED NOT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `description` text,
-  `author` varchar(255) DEFAULT NULL,
-  `text` text,
-  `is_published` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `date_created` datetime DEFAULT NULL,
-  `date_published` datetime DEFAULT NULL,
-  `tags` text,
-  `category` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `articles`
@@ -78,59 +59,19 @@ INSERT INTO `articles` (`id`, `title`, `description`, `author`, `text`, `is_publ
 (145, 'Vel tale justo ad. ', 'Vel tale justo ad. An cum labitur expetendis, dolor ornatus noluisse pro eu. Cum lucilius sensibus ei, ad mutat tamquam deleniti sea. His tritani accommodare ut, ad eos case wisi intellegebat.', 'Vel tale', 'Lorem ipsum dolor sit amet, sea nihil nobis antiopam eu, ad vim omnium vocibus ceteros. Inermis albucius recteque in sed, utinam invidunt ne vix. Mei ut viderer ponderum erroribus, eum eu sumo veri ocurreret. Dicat antiopam sea an. Suas quot temporibus ex eos, augue partiendo qui et.\r\n\r\nIus ipsum atomorum mnesarchum an. Clita dolorum legendos no cum, diam integre accusam an cum, quando accumsan id vix. Qui nonumy evertitur te, numquam debitis mei no. Nam electram honestatis et, te eius facer quaeque eos. Iudico putant inimicus vis cu, eam id illud pertinacia, est zril indoctum ad. Qui ne euismod feugiat moderatius, sit utinam tacimates scripserit ex.\r\n\r\nPosse saepe per ea. At vel velit mentitum, quis omnium laoreet eu vis, id vim amet lucilius scribentur. Cu has aliquid vituperatoribus. Mea luptatum pericula ex, sed ei oblique patrioque definitiones, mei ad solum forensibus. Qui debet complectitur ea.\r\n\r\nLegere malorum ne duo, in sed vide appellantur. Te mea duis ullum novum. Eos in impetus philosophia interpretaris, offendit vivendum inciderint pro an, est laudem tempor labores ne. Quot omittam eu vix.\r\n\r\nIn assueverit definitiones pro, ex ipsum affert duo. Sed ceteros perpetua ut, ius honestatis quaerendum cu. Et assum falli exerci quo, ad usu mollis debitis deleniti, sed veri dolor intellegat eu. Mel cu quodsi eruditi suscipiantur, ut vel assum percipitur. Nam ei nostro neglegentur ullamcorper, est eu commodo evertitur prodesset. Nec tota autem audiam ea, pri insolens praesent vulputate ex, ne cum cibo animal explicari. In has perfecto accusata perpetua.\r\n\r\nVel tale justo ad. An cum labitur expetendis, dolor ornatus noluisse pro eu. Cum lucilius sensibus ei, ad mutat tamquam deleniti sea. His tritani accommodare ut, ad eos case wisi intellegebat.\r\n\r\nAd sea adhuc possim, pri euismod nostrum adolescens cu. Ne cum quod persecuti liberavisse, ea nec purto forensibus intellegam, ne meis appetere has. Dicunt percipit mei ut, ex sit aeterno veritus copiosae, pro no tollit scaevola laboramus. Vidit menandri et vel, sed affert perpetua ad. Nec ei summo delectus pertinacia, nam ea equidem interesset.\r\n\r\nAncillae eleifend definitionem eu pri, detraxit iracundia referrentur cu his, an sea expetenda vituperata. Mel etiam viderer efficiantur ex. In odio disputationi deterruisset vim, sea no quot ferri debitis, ius animal accusata conceptam ex. Movet corrumpit mea ei, ius posse idque audiam ea. Cu alii prima putent cum.', 1, '2017-09-17 22:18:43', '2017-09-17 22:18:43', ' лаборатория касперского , сша ', NULL),
 (146, 'aaaaa', '', '', '', 1, '2017-09-18 10:12:59', '2017-09-18 10:12:59', 'dhdghdg ghdgndgh', NULL);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `banners`
---
-
-CREATE TABLE `banners` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `price` tinyint(3) UNSIGNED NOT NULL,
-  `firm` varchar(255) NOT NULL,
-  `image_name` varchar(255) NOT NULL,
-  `code_discaunt` varchar(255) NOT NULL,
-  `discaunt_percent` tinyint(3) UNSIGNED NOT NULL,
-  `position` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `categories`
---
-
-CREATE TABLE `categories` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `category_name` varchar(255) NOT NULL,
-  `parent_id` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `displayed` tinyint(3) UNSIGNED NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 --
 -- Дамп данных таблицы `categories`
 --
 
-INSERT INTO `categories` (`id`, `category_name`, `parent_id`, `displayed`) VALUES
-(5, 'Politics\r\n', 0, 1),
-(6, 'Analytics', 0, 1),
-(7, 'Economics', 0, 1),
-(8, 'Culture', 0, 1),
-(9, 'Society', 0, 1),
-(13, 'Showbiz', 0, 1),
-(14, 'Science', 0, 1);
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `categories_of_article`
---
-
-CREATE TABLE `categories_of_article` (
-  `id_article` int(10) UNSIGNED NOT NULL,
-  `id_category` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `categories` (`id`, `parent_id`, `category_name`, `displayed`) VALUES
+(5, 0, 'Politics\r\n', 1),
+(6, 0, 'Analytics', 1),
+(7, 0, 'Economics', 1),
+(8, 0, 'Culture', 1),
+(9, 0, 'Society', 1),
+(13, 0, 'Showbiz', 1),
+(14, 0, 'Science', 1),
+(20, 0, 'sss', 1);
 
 --
 -- Дамп данных таблицы `categories_of_article`
@@ -260,54 +201,45 @@ INSERT INTO `categories_of_article` (`id_article`, `id_category`) VALUES
 (145, 14),
 (145, 5);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `comments`
---
-
-CREATE TABLE `comments` (
-  `id_comment` int(10) UNSIGNED NOT NULL,
-  `id_article` int(10) UNSIGNED DEFAULT NULL,
-  `id_user` int(10) UNSIGNED DEFAULT NULL,
-  `id_parent_comment` int(10) UNSIGNED DEFAULT NULL,
-  `text` text,
-  `date` datetime DEFAULT NULL,
-  `like_ok` int(10) UNSIGNED DEFAULT NULL,
-  `dislike` int(10) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 --
 -- Дамп данных таблицы `comments`
 --
 
-INSERT INTO `comments` (`id_comment`, `id_article`, `id_user`, `id_parent_comment`, `text`, `date`, `like_ok`, `dislike`) VALUES
-(2, 128, 1, 1, 'sdfsdbs', NULL, NULL, NULL),
-(3, 128, 2, 7, 'sbfsbsfbs', NULL, NULL, NULL),
-(4, 128, 1, 4, 'sfb', NULL, NULL, NULL),
-(5, 128, 2, 6, 'sfbsgfbs', NULL, NULL, NULL),
-(7, 128, 1, 0, 'sgbsg', NULL, NULL, NULL),
-(8, 128, 1, 1, 'sdfsdbs', NULL, NULL, NULL),
-(9, 128, 2, 7, 'sbfsbsfbs', NULL, NULL, NULL),
-(10, 128, 1, 4, 'sfb', NULL, NULL, NULL),
-(11, 128, 2, 6, 'sfbsgfbs', NULL, NULL, NULL),
-(12, 128, 1, 0, 'sgbsg', NULL, NULL, NULL),
-(15, 128, 1, 4, NULL, NULL, NULL, NULL),
-(17, 128, 2, 7, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `images_of_article`
---
-
-CREATE TABLE `images_of_article` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `id_article` int(10) UNSIGNED NOT NULL,
-  `num` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `full_name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `comments` (`id_comment`, `id_parent_comment`, `nested_level`, `id_article`, `id_user`, `text`, `date`, `like_ok`, `dislike`) VALUES
+(2, 1, 0, 128, 1, 'sdfsdbs', NULL, '', NULL),
+(3, 7, 0, 128, 2, 'sbfsbsfbs', NULL, '3', NULL),
+(4, 4, 0, 128, 1, 'sfb', NULL, '', NULL),
+(5, 6, 0, 128, 2, 'sfbsgfbs', NULL, '', NULL),
+(7, 0, 0, 128, 1, 'sgbsg', NULL, '3,2', NULL),
+(8, 1, 0, 128, 1, 'sdfsdbs', NULL, '', NULL),
+(9, 7, 0, 128, 2, 'sbfsbsfbs', NULL, '3', NULL),
+(10, 4, 0, 128, 1, 'sfb', NULL, '', NULL),
+(11, 6, 0, 128, 2, 'sfbsgfbs', NULL, '', NULL),
+(12, 0, 0, 128, 1, 'sgbsg', NULL, '3', NULL),
+(15, 4, 0, 128, 1, NULL, NULL, '', NULL),
+(17, 7, 0, 128, 2, NULL, NULL, '', NULL),
+(20, 9, 0, 128, 1, 'dgfhdgfhd gfdgf dfgdghd', NULL, '3', NULL),
+(21, 9, 0, 128, 2, 'gbe  egbegb', NULL, '2', NULL),
+(22, 0, 0, 128, 2, '555', '2017-09-22 03:35:17', '2', NULL),
+(23, 0, 0, 128, 2, 'gbsfgbsfg', '2017-09-22 03:37:34', '2,3', NULL),
+(128, 23, 0, 128, 2, '0', '2017-09-22 22:21:32', '3,2', NULL),
+(154, 17, 0, 128, 2, '999999', '2017-09-23 02:29:29', '3,2', NULL),
+(155, 9, 0, 128, 2, '000000', '2017-09-23 02:32:06', '2,3', NULL),
+(156, 21, 0, 128, 2, '2', '2017-09-23 03:57:50', '', NULL),
+(157, 155, 0, 128, 2, '2', '2017-09-23 03:57:54', '', NULL),
+(158, 17, 0, 128, 2, '1', '2017-09-23 03:58:01', '', NULL),
+(159, 154, 0, 128, 2, '2', '2017-09-23 03:58:03', '', NULL),
+(160, 128, 0, 128, 2, '12345', '2017-09-23 04:06:50', '', NULL),
+(161, 22, 0, 128, 2, '54321', '2017-09-23 04:07:36', '2', NULL),
+(162, 22, 0, 128, 2, '54321', '2017-09-23 04:07:46', '', NULL),
+(163, 161, 0, 128, 2, '54321', '2017-09-23 04:07:53', '', NULL),
+(164, 163, 0, 128, 2, '2', '2017-09-23 04:08:27', '2', NULL),
+(165, 0, 0, 128, 2, 'gggggggggggggggggggggg', '2017-09-23 04:31:12', '', NULL),
+(166, 21, 0, 128, 2, '2', '2017-09-23 04:32:23', '', NULL),
+(167, 0, 0, 128, 2, 'uuuuuuuuu', '2017-09-23 04:33:41', '', NULL),
+(168, 20, 0, 128, 2, 'nnnnnnnn', '2017-09-23 04:34:19', '', NULL),
+(169, 157, 0, 128, 2, 'ssssssssss', '2017-09-23 23:58:43', '', NULL),
+(170, 0, 0, 128, 2, 'wwwww', '2017-09-24 00:03:41', '', NULL);
 
 --
 -- Дамп данных таблицы `images_of_article`
@@ -391,32 +323,28 @@ INSERT INTO `images_of_article` (`id`, `id_article`, `num`, `name`, `full_name`)
 (81, 145, 1, 'mini-electric-concept-iaa-1-218x150.jpg', '81_mini-electric-concept-iaa-1-218x150.jpg'),
 (82, 145, 2, 'z-wire-2-900x600-218x150.jpg', '82_z-wire-2-900x600-218x150.jpg');
 
--- --------------------------------------------------------
-
 --
--- Структура таблицы `messages`
+-- Дамп данных таблицы `likes`
 --
 
-CREATE TABLE `messages` (
-  `id` tinyint(3) UNSIGNED NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `message` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `pages`
---
-
-CREATE TABLE `pages` (
-  `id` tinyint(3) UNSIGNED NOT NULL,
-  `alias` varchar(100) NOT NULL,
-  `title` varchar(100) NOT NULL,
-  `content` text,
-  `is_published` tinyint(1) UNSIGNED DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `likes` (`like_comment`, `like_user`) VALUES
+(3, 1),
+(7, 2),
+(168, 2),
+(156, 2),
+(21, 2),
+(20, 2),
+(166, 2),
+(169, 2),
+(9, 2),
+(155, 2),
+(159, 2),
+(154, 2),
+(17, 2),
+(157, 2),
+(3, 2),
+(168, 1),
+(158, 1);
 
 --
 -- Дамп данных таблицы `pages`
@@ -427,160 +355,15 @@ INSERT INTO `pages` (`id`, `alias`, `title`, `content`, `is_published`) VALUES
 (4, 'test', 'test', 'dtyjdtyjdyj', 1),
 (5, 'guio', 'guio', 'guio', 1);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `tags`
---
-
-CREATE TABLE `tags` (
-  `id_article` int(10) UNSIGNED NOT NULL,
-  `tag` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `top_menu`
---
-
-CREATE TABLE `top_menu` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `text` varchar(255) NOT NULL,
-  `parent_id` int(10) UNSIGNED NOT NULL,
-  `uri` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `users`
---
-
-CREATE TABLE `users` (
-  `id` smallint(3) UNSIGNED NOT NULL,
-  `login` varchar(45) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `role` varchar(45) NOT NULL DEFAULT 'admin',
-  `password` char(32) NOT NULL,
-  `is_active` tinyint(1) UNSIGNED DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 --
 -- Дамп данных таблицы `users`
 --
 
 INSERT INTO `users` (`id`, `login`, `email`, `role`, `password`, `is_active`) VALUES
 (1, 'admin', 'admin@your-site.com', 'admin', '44ca5fa5c67e434b9e779c5febc46f06', 1),
-(2, '11111', 'a@a.a', 'user', '1854830800a115a705b59715555c11b6', 1);
+(2, '11111', 'a@a.a', 'user', '1854830800a115a705b59715555c11b6', 1),
+(3, '22222', 'd@d.d', 'user', '67d7cbe6559cc242c411fdd157d9b69d', 1);
 
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `articles`
---
-ALTER TABLE `articles`
-  ADD PRIMARY KEY (`id`) USING BTREE;
-
---
--- Индексы таблицы `banners`
---
-ALTER TABLE `banners`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `comments`
---
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`id_comment`);
-
---
--- Индексы таблицы `images_of_article`
---
-ALTER TABLE `images_of_article`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `messages`
---
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `pages`
---
-ALTER TABLE `pages`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `top_menu`
---
-ALTER TABLE `top_menu`
-  ADD PRIMARY KEY (`id`);
-
---
--- Индексы таблицы `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT для сохранённых таблиц
---
-
---
--- AUTO_INCREMENT для таблицы `articles`
---
-ALTER TABLE `articles`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
---
--- AUTO_INCREMENT для таблицы `banners`
---
-ALTER TABLE `banners`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
---
--- AUTO_INCREMENT для таблицы `comments`
---
-ALTER TABLE `comments`
-  MODIFY `id_comment` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
---
--- AUTO_INCREMENT для таблицы `images_of_article`
---
-ALTER TABLE `images_of_article`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
---
--- AUTO_INCREMENT для таблицы `messages`
---
-ALTER TABLE `messages`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `pages`
---
-ALTER TABLE `pages`
-  MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
---
--- AUTO_INCREMENT для таблицы `top_menu`
---
-ALTER TABLE `top_menu`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT для таблицы `users`
---
-ALTER TABLE `users`
-  MODIFY `id` smallint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

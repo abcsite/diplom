@@ -53,8 +53,8 @@ function commentsGet() {
             $('div[data_base_element="no_base_element"]').remove();
         }
 
-        comments = JSON.parse(data);
-        commLength = comments.length;
+        var comments = JSON.parse(data);
+        var commLength = comments.length;
 
         for (i = 0; i < commLength; i++) {
 
@@ -71,7 +71,7 @@ function commentsGet() {
             $comm_clone.find('.comm_date').text($row['date']);
             $comm_clone.find('.comm_like_count').text($row['like_count']);
             $comm_clone.find('.comm_text').text($row['text']);
-            $comm_clone.find('.comm_input').text($row['nested_level']);
+            // $comm_clone.find('.comm_input').text($row['nested_level']);
 
             $comm_clone.find('.id_parent').text($row['id_parent_comment']);
             $comm_clone.find('.id').text($row['id_comment']);
