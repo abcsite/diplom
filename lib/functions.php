@@ -42,7 +42,7 @@ function structure_to_line($unstructured_arr, $options = ['begin_id' => 0, 'nest
                 $new_options['begin_id'] = $row[$options['field_id']];
                 $new_options['nested_level'] = $options['nested_level'] + 1 ;
                 $arr_childs = structure_to_line($unstructured_arr, $new_options );
-                if ($arr_childs) {
+                if ( count($arr_childs) ) {
                     foreach ($arr_childs as $row_child) {
                         $arr[] = $row_child;
                     }
@@ -52,7 +52,7 @@ function structure_to_line($unstructured_arr, $options = ['begin_id' => 0, 'nest
         return $arr;
 
     } else {
-        return null;
+        return [];
     }
 }
 

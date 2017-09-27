@@ -363,6 +363,8 @@ class Article extends Model
         return $result;
     }
 
+    
+    
     public function add_cat($catId, $id)
     {
         $id = (int)$id;

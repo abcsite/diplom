@@ -16,7 +16,7 @@ $(document).ready(function () {
 
     slider();
 
-    categoriesGet();
+    // categoriesGet();
 
     //
     // $(window).unload(function(){
@@ -25,107 +25,6 @@ $(document).ready(function () {
 
 })
 
-
-function categoriesGet() {
-
-    $categories_wrapp = $('#categories');
-    $category_base_element = $('#category_base');
-
-    // var user_id = $('#user_id').attr('data_user_id');
-    // var article_id = $('#article_id').attr('data_article_id');
-
-    var data = {};
-    var uri = '/admin/categories/categories_get_ajax/';
-    myAjax(uri, data, categoriesReturn, categoriesReturnErr);
-
-
-    function categoriesReturn(data) {
-        if (data) {
-            $('tr[data_base_element="no_base_element"]').remove();
-        }
-
-        var categories = JSON.parse(data);
-        var categoriesLength = categories.length;
-
-        for (i = 0; i < categoriesLength; i++) {
-
-            $row = categories[i];
-
-            $categ_clone = $category_base_element.clone();
-
-            $categ_clone.attr('data_base_element', 'no_base_element');
-            $categ_clone.css('display', 'block');
-            $categ_clone.find('.categ_text').css('padding-left', 30 * $row['nested_level'] + 'px');
-            $categ_clone.attr('id', $row['id']);
-            $categ_clone.attr('data_parent_id', $row['parent_id']);
-            $categ_clone.find('.categ_id').text($row['id']);
-            $categ_clone.find('.categ_text').text($row['category_name']);
-
-            $categories_wrapp.append($categ_clone);
-            // console.log(comments[i]['id_comment']);
-        }
-
-        $('.category .categ_add_subcat').on('click', function () {
-            $this_row = $(this).parent().parent();
-            $this_row.find('.categ_window').css('display', 'block');
-        });
-
-        $('.category .categ_close_window').on('click', function () {
-            $this_row = $(this).parent().parent().parent();
-            $this_row.find('.categ_window').css('display', 'none');
-        });
-
-        $('.category .categ_send_subcat').on('click', function () {
-            $this_row = $(this).parent().parent().parent();
-            var parent_id = $this_row.attr('id');
-            var id = $this_row.find('.categ_input').attr('id');
-            if (!id) {id = null}
-            var text = $this_row.find('.categ_input').val();
-            $this_row.find('.categ_input').val('');
-            text = text.trim();
-            
-            
-            
-            if (text != '') {
-                var data = {
-                    'category_name': text,
-                    'parent_id': parent_id,
-                    'id': id
-                };
-
-                var uri = '/admin/categories/category_add_ajax/';
-                myAjax(uri, data, categoriesReturn, categoriesReturnErr);
-            }
-
-        });
-
-
-        $('.category .categ_edit').on('click', function () {
-            $this_row = $(this).parent().parent();
-            $this_row.find('.categ_window').css('display', 'block');
-            var text = $this_row.find('.categ_text').text();
-            $this_row.find('.categ_input').val(text);
-            var id = $this_row.attr('id');
-            $this_row.find('.categ_input').attr('id', id);
-        });
-
-        $('.category .categ_delete').on('click', function () {
-            if (confirmDelete()) {
-                $this_row = $(this).parent().parent();
-                var id = $this_row.attr('id');
-                var uri = '/admin/categories/category_delete_ajax/' + id + '/';
-
-                myAjax(uri, data, categoriesReturn, categoriesReturnErr);
-            }
-        });
-
-    }
-
-    function categoriesReturnErr() {
-        alert('Error');
-    }
-
-}
 
 
 function confirmDelete() {
@@ -138,8 +37,7 @@ function confirmDelete() {
 }
 
 function myAjax(uri, data, success, error) {
-    // $(this).text("77777777777777777");
-    // alert(event.target.innerHTML);
+
     $.ajax({
         url: uri,
         type: "POST",
@@ -214,7 +112,6 @@ function menuShow() {
 
 
 // function closeIt() {
-//     alert('oooooo');
 //     return "Пожалуйста, не закрывайте меня!";
 // }
 // window.onbeforeunload = closeIt;

@@ -51,9 +51,11 @@ class Article_pageController extends Controller
         $comments = $this->model->getCommentsByArticleId($this->params[0]);
         $comments_line = structure_to_line($comments, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id_comment', 'field_id_parent' => 'id_parent_comment' ]);
 
-        foreach ($comments_line as $key => $row) {
-            if (!$row['date']) {
-                $comments_line[$key]['date'] = '';
+        if ($comments_line) {
+            foreach ($comments_line as $key => $row) {
+                if (!$row['date']) {
+                    $comments_line[$key]['date'] = '';
+                }
             }
         }
 

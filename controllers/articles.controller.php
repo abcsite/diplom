@@ -30,10 +30,6 @@ class ArticlesController extends Controller
         }
     }
 
-    public function admin_index()
-    {
-        $this->data['articles'] = $this->model->getList();
-    }
 
     public function filter_ajax(){
 
@@ -217,35 +213,14 @@ class ArticlesController extends Controller
     }
 
 
-    
-    
-    
-    
-    
-    
-    
 
-    public function admin_add()
+
+
+    public function admin_index()
     {
-
-        if ($_POST) {
-            $result = $this->model->save($_POST);
-//            print_r($_FILES);die;
-
-            if ($result) {
-                $result = $result && $this->model->saveImages($_FILES['images']);
-            }
-
-//            if ( $result) {
-//                Session::setFlash('Article was saved.');
-//            } else {
-//                Session::setFlash('Error.');
-//            }
-
-            Router::redirect('/admin/articles/');
-
-        }
+        $this->data['articles'] = $this->model->getList();
     }
+    
 
     public function admin_edit()
     {
@@ -254,24 +229,29 @@ class ArticlesController extends Controller
 //        var_dump($_FILES);  die;
 
         if ($_POST) {
-            $id = isset($_POST['id']) ? $_POST['id'] : null;
+            $id = ($_POST['id']) ? $_POST['id'] : null;
+
             $result = $this->model->save($_POST, $id);
 
-            if ($result && $_FILES['images']) {
-                $result = $this->model->saveImages($_FILES['images'], $id);
+            if ($_FILES['images']) {
+                $result = $result && $this->model->saveImages($_FILES['images'], $id);
             }
 
-            if ($result && $_FILES['image']) {
-                $result = $this->model->replaceImages($_FILES['image'], $id);
+            if ($_FILES['image']) {
+                $result = $result && $this->model->replaceImages($_FILES['image'], $id);
             }
+
 
             if (!$id) {
                 $newId = $this->model->getMaxValue('articles', 'id');
-                if ($newId) {
-                    Router::redirect('/admin/articles/edit/' . $newId . '/');
-                }
-            }
 
+                if ($_POST['categories']) {
+                    foreach ($_POST['categories'] as $categ) {
+                        $result = $result && $this->model->add_cat($categ, $newId);
+                    }
+                }
+                Router::redirect('/admin/articles/edit/' . $newId . '/');
+            }
 
 //            if ( $result) {
 //                Session::setFlash('Article was saved.');
@@ -288,22 +268,7 @@ class ArticlesController extends Controller
 
             $this->data['article_images'] = $this->model->getImgsByArticleId($this->params[0]);
 
-            $article_cat = $this->model->getCategByArticleId($this->params[0]);
-            $cat = $this->model->getCategories();
-            $this->data['article_cat'] = $article_cat;
-
-            $cat_other = [];
-            $colum = array_column($article_cat, 'cat_id');
-            foreach ($cat as $num => $row) {
-                if (!in_array($row['cat_id'], $colum)) {
-                    $cat_other[$num]['cat_id'] = $row['cat_id'];
-                    $cat_other[$num]['cat_name'] = $row['cat_name'];
-                }
-            }
-            $this->data['article_cat_other'] = $cat_other;
-
         } else {
-            $this->data['article_cat_other'] = $this->model->getCategories();
 
 //            Session::setFlash('Wrong article id.');
 //            Router::redirect('/admin/articles/');
@@ -313,7 +278,15 @@ class ArticlesController extends Controller
     public function admin_delete()
     {
         if (isset($this->params[0])) {
+
+            $article_images = $this->model->getImgsByArticleId($this->params[0]);
+
+            foreach ($article_images as $image) {
+                $result = $result && $this->model->del_image($image['full_name']);
+            }
+
             $result = $this->model->delete($this->params[0]);
+
             if ($result) {
                 Session::setFlash('Article was deleted.');
             } else {
@@ -336,47 +309,41 @@ class ArticlesController extends Controller
         Router::redirect('/admin/articles/edit/' . $this->params[1]);
     }
 
-    public function admin_add_cat()
-    {
-        if (isset($this->params[0]) && isset($this->params[1])) {
-            $this->model->add_cat($this->params[0], $this->params[1]);
-        }
-        Router::redirect('/admin/articles/edit/' . $this->params[1]);
-    }
 
-    public function admin_delete_cat()
+    public function admin_categories_get_ajax()
     {
-        if (isset($this->params[0]) && isset($this->params[1])) {
-            $this->model->delete_cat($this->params[0], $this->params[1]);
-        }
-        Router::redirect('/admin/articles/edit/' . $this->params[1]);
-    }
+        $categories = $this->model->getCategories();
+        $categories_line = structure_to_line($categories, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id' ]);
 
-    public function admin_add_cat_ajax()
-    {
-//        deb($this->params[0]);
-        if (isset($this->params[0]) && isset($this->params[1])) {
-            $this->model->add_cat($this->params[0], $this->params[1]);
+        if (isset($this->params[0])) {
+            $article_categories = $this->model->getCategByArticleId($this->params[0]);
+            $article_categories_id = array_column($article_categories, 'cat_id');
+        } else {
+            $article_categories_id = [];
         }
-        $par = [$this->params[0], $this->params[1], $this->params[2]];
-        echo(json_encode($par));
+
+        $data['categories'] = $categories_line;
+        $data['article_categories'] = $article_categories_id;
+        echo(json_encode($data));
         die;
-
-        Router::redirect('/admin/articles/edit/' . $this->params[1]);
     }
 
-    public function admin_del_cat_ajax()
+    public function admin_add_categ_ajax()
     {
-//        deb($this->params[0]);
         if (isset($this->params[0]) && isset($this->params[1])) {
-            $this->model->delete_cat($this->params[0], $this->params[1]);
+            $result = $this->model->add_cat($this->params[0], $this->params[1]);
+            echo($result);
         }
-        $par = [$this->params[0], $this->params[1], $this->params[2]];
-        echo(json_encode($par));
         die;
-
-        Router::redirect('/admin/articles/edit/' . $this->params[1]);
     }
 
+    public function admin_delete_categ_ajax()
+    {
+        if (isset($this->params[0]) && isset($this->params[1])) {
+            $result = $this->model->delete_cat($this->params[0], $this->params[1]);
+            echo($result);
+        }
+        die;
+    }
 
 }

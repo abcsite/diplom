@@ -1,34 +1,36 @@
-<?php if ($data) { ?>
-    <h3>Edit Article</h3>
-    <p><?=$data['article']['id']?> -- <?=$data['article']['title']?></p>
+<?php if ($data['article']) { ?>
+    <h3>Редактировать статью:</h3>
+    <h4><?=$data['article']['id']?> - <?=$data['article']['title']?></h4>
 <?php } else { ?>
-    <h3>Add Article</h3><br/>
+    <h3>Добавить статью</h3><br/>
 <?php } ?>
 
 
 <form method="post" action="" enctype="multipart/form-data"   style="width: 900px;">
     <p>
-        <input type="submit" class="btn btn-success" value="Save"  style="width: 100px;" />&nbsp;
+        <input type="submit" class="btn btn-success" value="Сохранить"  style="width: 100px;" />&nbsp;
         <?php if ($data['article']['id']) { ?>
-        <a href="/article_page/view/<?= $data['article']['id'] ?>"  class="btn btn-success" >View Article</a>&nbsp;
-        <a href="/admin/articles/edit/"  class="btn btn-success" >New Article</a>&nbsp;
-        <a href="/admin/articles/"  class="btn btn-success" >List Articles</a>&nbsp;
+        <a href="/admin/articles/delete/<?= $data['article']['id'] ?>"  class="btn btn-success"  onclick="return confirm('Вы действительно хотите удалить эту статью?');" >Удалить статью</a>&nbsp;
+        <a href="/article_page/view/<?= $data['article']['id'] ?>"  class="btn btn-success" >Просмотреть статью</a>&nbsp;
+        <a href="/admin/articles/edit/"  class="btn btn-success" >Новая статья</a>&nbsp;
         <?php } ?>
+        <a href="/admin/articles/"  class="btn btn-success" >Список статей</a>&nbsp;
+
     </p>
 
 
 
     <div id="tabs" style="width: 870px;">
         <ul>
-            <li><a href="#tabs-1">Basic Data</a></li>
-            <li><a href="#tabs-2">Images</a></li>
-            <li><a href="#tabs-3">Tags</a></li>
-            <li><a href="#tabs-4">Category</a></li>
+            <li><a href="#tabs-1">Основные данные</a></li>
+            <li><a href="#tabs-2">Изображения</a></li>
+            <li><a href="#tabs-3">Теги</a></li>
+            <li><a href="#tabs-4">Категории</a></li>
         </ul>
 
         <div id="tabs-1">
             <?php if ($data['article']['id']) { ?>
-            <input type="hidden" name="id" value="<?=$data['article']['id']?>"/>
+            <input id="article_id" type="hidden" name="id" value="<?=$data['article']['id']?>"/>
             <?php } ?>
             <input type="hidden" id="date_created" name="date_created" value="<?=$data['article']['date_created']?>"
                    class="form-control"/>
@@ -40,26 +42,26 @@
                    class="form-control"/>
 
             <div class="form-group">
-                <label for="is_published">Publish?</label>
+                <label for="is_published">Опубликовано? </label>
                 <input type="checkbox" id="is_published"
                        name="is_published" <?php if ( $data['article']['is_published'] ) { ?>
                 checked="checked" <?php } ?> />
             </div>
             <div class="form-group">
-                <label for="title">Title</label>
+                <label for="title">Название</label>
                 <input type="text" id="title" name="title" value="<?=$data['article']['title']?>" class="form-control"/>
             </div>
             <div class="form-group">
-                <label for="description">Description</label>
+                <label for="description">Описание</label>
                 <textarea  id="description" name="description" class="form-control" rows="3"><?=$data['article']['description'] ?></textarea>
             </div>
             <div class="form-group">
-                <label for="author">Author</label>
+                <label for="author">Автор</label>
                 <input type="text" id="author" name="author" value="<?=$data['article']['author']?>"
                        class="form-control"/>
             </div>
             <div class="form-group">
-                <label for="text">Text</label>
+                <label for="text">Текст</label>
                 <textarea id="text" name="text" class="form-control" rows="15"><?=$data['article']['text']?></textarea>
             </div>
 
@@ -67,17 +69,17 @@
 
         <div id="tabs-2">
 
-            <label for="images">Add Images:</label>
-            <input type="file" id="images" name="images[]" multiple="" accept="image/*"/><br/>
+            <label for="images">Добавить изображения:</label>
+            <input type="file" id="images" name="images[]" multiple="" accept="image/*"/><br/><br/>
 
-            <label for="images">Replace Images:</label>
+            <label for="images">Заменить изображение:</label>
             <table class="table table-striped" style="width: 100%;">
                 <tr style="font-weight: bolder; ">
                     <td style="width: 5%;">#</td>
-                    <td style="width: 20%;">Images</td>
-                    <td style="width: 30%;">Full Name</td>
-                    <td style="width: 30%;">Replace Image</td>
-                    <td style="width: 10%;">Delete Image</td>
+                    <td style="width: 20%;">Изображение</td>
+                    <td style="width: 30%;">Полное имя файла</td>
+                    <td style="width: 30%;">Новое изображение</td>
+                    <td style="width: 10%;">Удалить изображение</td>
                 </tr>
                 <?php if ($data['article_images']) {$i=1; foreach( $data['article_images'] as $img) { ?>
                 <tr>
@@ -85,12 +87,11 @@
                     <td><img src="/webroot/img/articles/<?= $img['full_name'] ?>" alt="" style="width: 100px;"></td>
                     <td><?= $img['full_name'] ?></td>
                     <td align="left">
-                        <input type="file" name="image[<?= $img['id'] ?>]" accept="image/*"/>
+                        <input  type="file" name="image[<?= $img['id'] ?>]" accept="image/*"/>
                     </td>
                     <td align="left">
-                        <!--<a href="/admin/articles/deleteimage/<?= $img['full_name'] . '/' . $data['article']['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-warning">delete</button></a>-->
-                        <a href="/admin/articles/deleteimage/<?= $img['full_name'] . '/' . $data['article']['id'] ?>"
-                           onclick="return confirmDelete();">delete</a>
+                        <a  class="btn btn-sm btn-default" href="/admin/articles/deleteimage/<?= $img['full_name'] . '/' . $data['article']['id'] ?>"
+                           onclick="return confirmDelete();">удалить</a>
                     </td>
                 </tr>
                 <?php }} ?>
@@ -100,64 +101,26 @@
 
         <div id="tabs-3">
             <div class="form-group">
-                <label for="tags">Tags ( ',' - delimiter ):</label>
+                <label for="tags">Теги ( ',' - разделитель тегов ):</label>
                 <textarea id="tags" name="tags" class="form-control"><?=$data['article']['tags']?></textarea>
             </div>
         </div>
 
-
         <div id="tabs-4">
 
-            <label for="images">Select category of article:</label>
-            <table class="table table-striped" style="width: 100%;">
-                <tr style="font-weight: bolder; ">
-                    <td style="width: 5%;">#</td>
-                    <td style="width: 50%;">Category</td>
-                    <td style="width: 15%;">Add/Del</td>
-                </tr>
-                <?php $i=1; if ($data['article_cat']) { foreach( $data['article_cat'] as $cat) { ?>
-                <tr>
-                    <td><?= ++$i ?></td>
-                    <td><?= $cat['cat_name'] ?></td>
-                    <td align="left">
-                        <span
-                         class="btn btn-sm btn-warning" id="cat_id_del<?= $cat["cat_id"] ?>"  style="display:inline-block"
-                        onclick="myAjax('/admin/articles/del_cat_ajax/<?= $cat["cat_id"] ?>/<?= $data["article"]["id"] ?>/del/', '', updateCategoryByArticle, error);"  >
-                        delete</span>
-                        <span
-                         class="btn btn-sm btn-primary" id="cat_id_add<?= $cat["cat_id"] ?>"  style="display:none"
-                        onclick="myAjax('/admin/articles/add_cat_ajax/<?= $cat["cat_id"] ?>/<?= $data["article"]["id"] ?>/add/', '', updateCategoryByArticle, error);">
-                        add</span>
-                    </td>
-                </tr>
-                <?php }} ?>
-                <?php if ($data['article_cat_other']) { foreach( $data['article_cat_other'] as $cat) { ?>
-                <tr >
-                    <td><?= $i++ ?></td>
-                    <td><?= $cat['cat_name'] ?></td>
-                    <td align="left">
-                        <span
-                         class="btn btn-sm btn-warning" id="cat_id_del<?= $cat["cat_id"] ?>"  style="display:none"
-                          onclick="myAjax('/admin/articles/del_cat_ajax/<?= $cat["cat_id"] ?>/<?= $data["article"]["id"] ?>/del/', '', updateCategoryByArticle, error);"  >
-                        delete</span>
-                        <span
-                           class="btn btn-sm btn-primary" id="cat_id_add<?= $cat["cat_id"] ?>"  style="display:inline-block"
-                           onclick="myAjax('/admin/articles/add_cat_ajax/<?= $cat["cat_id"] ?>/<?= $data["article"]["id"] ?>/add/', '', updateCategoryByArticle, error);">
-                        add</span>
-                    </td>
-                </tr>
-                <?php }} ?>
+            <label for="images">Добавьте или удалите категории/подкатегории , в которых будет отображаться статья: <br/> (изменения сохраняются автоматически)</label>
+            <table id="categories" class="table table-default" width="900px">
 
-                <!--<tr class="item">-->
-                    <!--<td></td>-->
-                    <!--<td></td>-->
-                    <!--<td align="left">-->
-                        <!--<a href="#" data-cat_id = "" data-id = ""-->
-                           <!--class="btn btn-sm btn-primary"-->
-                           <!--onclick="myAjax('/admin/articles/add_cat_ajax/11/94/', '7777', updateCategoryByArticle, error);"-->
-                        <!--&gt;add</a>-->
-                    <!--</td>-->
-                <!--</tr>-->
+                <tr  id="category_base" data_parent_id=""  class="category" style="display: none;  "  >
+                    <td class="categ_check" width="40px" style="vertical-align:middle;"> </td>
+                    <td class="categ_id" width="50px" style="vertical-align:middle;"> </td>
+                    <td class="categ_text"  width="410px"  style="vertical-align:middle; "> </td>
+                    <td align="right"  width="400px"  style="vertical-align:middle; ">
+                        <span class="categ_add  btn btn-sm btn-default">добавить категорию</span>
+                        <span class="categ_delete  btn btn-sm btn-default">удалить</span>
+                        <input type="hidden" class="categ_input_hidden" name="" value="" style="display: none;  " />
+                    </td>
+                </tr>
 
             </table>
 
@@ -166,3 +129,132 @@
     </div>
 
 </form>
+
+
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", categoriesGet);
+
+    function categoriesGet() {
+
+        $categories_wrapp = $('#categories');
+        $category_base_element = $('#category_base');
+
+        var article_id = $('#article_id').val();
+
+        var data = {};
+        var uri = '/admin/articles/categories_get_ajax/';
+        if (article_id) {
+            uri = uri  + article_id + '/' ;
+        }
+        myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+
+
+        function categoriesReturn(data) {
+            if (data) {
+                $('tr[data_base_element="no_base_element"]').remove();
+            }
+
+            var article_data = JSON.parse(data);
+            var categories = article_data['categories'];
+            var article_categories = article_data['article_categories'];
+
+            var categoriesLength = categories.length;
+
+            for (i = 0; i < categoriesLength; i++) {
+
+                $row = categories[i];
+
+                $categ_clone = $category_base_element.clone();
+
+                $categ_clone.css('display', 'block');
+                $categ_clone.attr('data_base_element', 'no_base_element');
+                $categ_clone.attr('data_categ_id', $row['id']);
+                $categ_clone.attr('data_categ_parent_id', $row['parent_id']);
+                $categ_clone.find('.categ_text').css('padding-left', 50 * $row['nested_level'] + 'px');
+                $categ_clone.find('.categ_id').text($row['id']);
+                $categ_clone.find('.categ_text').text($row['category_name']);
+                $categ_clone.find('.categ_input_hidden').val($row['id']);
+
+                var check = false;
+                for (var j = 0; j < article_categories.length; j++) {
+                    if ( $row['id'] == article_categories[j] ) {
+                        check = true;
+                      break;
+                    }
+                }
+                if ( check) {
+                    $categ_clone.find('.categ_check').html('&#10004;');
+                    $categ_clone.find('.categ_add').css('display', 'none');
+                    $categ_clone.find('.categ_delete').css('display', 'inline-block');
+                } else {
+                    $categ_clone.find('.categ_add').css('display', 'inline-block');
+                    $categ_clone.find('.categ_delete').css('display', 'none');
+                }
+
+                $categories_wrapp.append($categ_clone);
+                // console.log(comments[i]['id_comment']);
+            }
+
+            $('.category .categ_add').on('click', function () {
+                $this_row = $(this).parent().parent();
+                var categ_id = $this_row.attr('data_categ_id');
+
+                if (article_id) {
+                    var data = {};
+                    var uri = '/admin/articles/add_categ_ajax/' + categ_id + '/' + article_id + '/';
+                    myAjax(uri, data, categoriesAddReturn, categoriesReturnErr);
+
+                    function categoriesAddReturn(data) {
+                        if (data) {
+                            $this_row.find('.categ_check').html('&#10004;');
+                            $this_row.find('.categ_add').css('display', 'none');
+                            $this_row.find('.categ_delete').css('display', 'inline-block');
+                        }
+                    }
+                } else {
+                    $this_row.find('.categ_check').html('&#10004;');
+                    $this_row.find('.categ_add').css('display', 'none');
+                    $this_row.find('.categ_delete').css('display', 'inline-block');
+                    $this_row.find('.categ_input_hidden').attr('name', 'categories[]');
+                }
+            });
+
+            $('.category .categ_delete').on('click', function () {
+                if (confirm('Вы действительно хотите отменить отображение статьи в этой категории?')) {
+                    $this_row = $(this).parent().parent();
+                    var categ_id = $this_row.attr('data_categ_id');
+
+                    if (article_id) {
+                        var data = {};
+                        var uri = '/admin/articles/delete_categ_ajax/' + categ_id + '/' + article_id + '/';
+                        myAjax(uri, data, categoriesDeleteReturn, categoriesReturnErr);
+
+                        function categoriesDeleteReturn(data) {
+                            if (data) {
+                                $this_row.find('.categ_check').html('');
+                                $this_row.find('.categ_add').css('display', 'inline-block');
+                                $this_row.find('.categ_delete').css('display', 'none');
+                            }
+                        }
+                    } else {
+                        $this_row.find('.categ_check').html('');
+                        $this_row.find('.categ_add').css('display', 'inline-block');
+                        $this_row.find('.categ_delete').css('display', 'none');
+                        $this_row.find('.categ_input_hidden').attr('name', '');
+                    }
+
+                }
+            });
+
+        }
+
+        function categoriesReturnErr() {
+            alert('Error');
+        }
+
+    }
+</script>

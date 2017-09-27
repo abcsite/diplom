@@ -13,9 +13,9 @@
         <td class="categ_id"  style="vertical-align:middle; width: 50px; "></td>
         <td class="categ_text"  style="vertical-align:middle; width: 450px; "></td>
         <td align="right"  style="vertical-align:middle; width: 500px; ">
-            <button class="categ_add_subcat  btn btn-sm btn-link">добавить подкатегорию</button>
-            <button class="categ_edit  btn btn-sm btn-link">редактировать</button>
-            <button class="categ_delete  btn btn-sm btn-link">удалить</button>
+            <button class="categ_add_subcat  btn btn-sm btn-default">добавить подкатегорию</button>
+            <button class="categ_edit  btn btn-sm btn-default">редактировать</button>
+            <button class="categ_delete  btn btn-sm btn-default">удалить</button>
             <div class="categ_window"  style=" display: none; position: fixed; left: 30%; top: 40%; width: 40%; padding: 30px; background-color: rgba(0,0,0,0.3); text-align: left; ">
                 <input type="text" value=""  class="categ_input"  style="width: 100%; padding:5px; ">
                 <button class="categ_send_subcat  btn btn-sm btn-default">сохранить</button>
@@ -26,6 +26,111 @@
 </table>
 
 
+<script>
+
+    document.addEventListener("DOMContentLoaded", categoriesGet);
+
+    function categoriesGet() {
+
+        $categories_wrapp = $('#categories');
+        $category_base_element = $('#category_base');
+
+        // var user_id = $('#user_id').attr('data_user_id');
+        // var article_id = $('#article_id').attr('data_article_id');
+
+        var data = {};
+        var uri = '/admin/categories/categories_get_ajax/';
+        myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+
+
+        function categoriesReturn(data) {
+            if (data) {
+                $('tr[data_base_element="no_base_element"]').remove();
+            }
+
+            var categories = JSON.parse(data);
+            var categoriesLength = categories.length;
+
+            for (i = 0; i < categoriesLength; i++) {
+
+                $row = categories[i];
+
+                $categ_clone = $category_base_element.clone();
+
+                $categ_clone.attr('data_base_element', 'no_base_element');
+                $categ_clone.css('display', 'block');
+                $categ_clone.find('.categ_text').css('padding-left', 30 * $row['nested_level'] + 'px');
+                $categ_clone.attr('id', $row['id']);
+                $categ_clone.attr('data_parent_id', $row['parent_id']);
+                $categ_clone.find('.categ_id').text($row['id']);
+                $categ_clone.find('.categ_text').text($row['category_name']);
+
+                $categories_wrapp.append($categ_clone);
+                // console.log(comments[i]['id_comment']);
+            }
+
+            $('.category .categ_add_subcat').on('click', function () {
+                $this_row = $(this).parent().parent();
+                $this_row.find('.categ_window').css('display', 'block');
+            });
+
+            $('.category .categ_close_window').on('click', function () {
+                $this_row = $(this).parent().parent().parent();
+                $this_row.find('.categ_window').css('display', 'none');
+            });
+
+            $('.category .categ_send_subcat').on('click', function () {
+                $this_row = $(this).parent().parent().parent();
+                var parent_id = $this_row.attr('id');
+                var id = $this_row.find('.categ_input').attr('id');
+                if (!id) {id = null}
+                var text = $this_row.find('.categ_input').val();
+                $this_row.find('.categ_input').val('');
+                text = text.trim();
+
+
+
+                if (text != '') {
+                    var data = {
+                        'category_name': text,
+                        'parent_id': parent_id,
+                        'id': id
+                    };
+
+                    var uri = '/admin/categories/category_add_ajax/';
+                    myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+                }
+
+            });
+
+
+            $('.category .categ_edit').on('click', function () {
+                $this_row = $(this).parent().parent();
+                $this_row.find('.categ_window').css('display', 'block');
+                var text = $this_row.find('.categ_text').text();
+                $this_row.find('.categ_input').val(text);
+                var id = $this_row.attr('id');
+                $this_row.find('.categ_input').attr('id', id);
+            });
+
+            $('.category .categ_delete').on('click', function () {
+                if (confirmDelete()) {
+                    $this_row = $(this).parent().parent();
+                    var id = $this_row.attr('id');
+                    var uri = '/admin/categories/category_delete_ajax/' + id + '/';
+
+                    myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+                }
+            });
+
+        }
+
+        function categoriesReturnErr() {
+            alert('Error');
+        }
+
+    }
+</script>
 
 
 

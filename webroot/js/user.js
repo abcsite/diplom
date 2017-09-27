@@ -11,7 +11,7 @@ $(document).ready(function () {
 
     slider();
 
-    commentsGet();
+    // commentsGet();
 
       // time_subscrib = setTimeout(function () {
     //     popupSubscrib();
@@ -34,105 +34,7 @@ function paginationTable() {
 }
 
 
-function commentsGet() {
 
-    $comments_wrapp = $('#comments');
-    $comment_base_element = $('#comment_base');
-
-    var user_id = $('#user_id').attr('data_user_id');
-    var article_id = $('#article_id').attr('data_article_id');
-    if (article_id) {
-        var data = {};
-        var uri = '/article_page/comments_get_ajax/' + article_id + '/';
-        myAjax(uri, data, commentsReturn, commentsReturnErr);
-    }
-
-    function commentsReturn(data) {
-
-        if (data) {
-            $('div[data_base_element="no_base_element"]').remove();
-        }
-
-        var comments = JSON.parse(data);
-        var commLength = comments.length;
-
-        for (i = 0; i < commLength; i++) {
-
-            $row = comments[i];
-
-            $comm_clone = $comment_base_element.clone();
-
-            $comm_clone.attr('data_base_element', 'no_base_element');
-            $comm_clone.css('display', 'block');
-            $comm_clone.css('padding-left', 30 * $row['nested_level'] + 'px');
-            $comm_clone.attr('id', $row['id_comment']);
-            $comm_clone.attr('data_parent_id', $row['id_parent_comment']);
-            $comm_clone.find('.comm_login').text($row['login']);
-            $comm_clone.find('.comm_date').text($row['date']);
-            $comm_clone.find('.comm_like_count').text($row['like_count']);
-            $comm_clone.find('.comm_text').text($row['text']);
-            // $comm_clone.find('.comm_input').text($row['nested_level']);
-
-            $comm_clone.find('.id_parent').text($row['id_parent_comment']);
-            $comm_clone.find('.id').text($row['id_comment']);
-
-            $comments_wrapp.append($comm_clone);
-            // console.log(comments[i]['id_comment']);
-        }
-
-        $('.comment .comm_send_btn').on('click', function () {
-            $this_div = $(this).parent();
-            var id = $this_div.attr('id');
-            var text = $this_div.find('.comm_input').val();
-            $this_div.find('.comm_input').val('');
-            text = text.trim();
-
-            if (text != '') {
-                var data = {
-                    'text': text,
-                    'id_parent_comment': id,
-                    'id_user': user_id,
-                    'id_article': article_id
-                };
-
-                var uri = '/article_page/comment_add_ajax/' + article_id + '/';
-                myAjax(uri, data, commentsReturn, commentsReturnErr);
-            }
-
-        });
-
-        $('.comment .comm_reply_btn').on('click', function () {
-            $this_div = $(this).parent();
-            var id = $this_div.attr('id');
-            $this_div.find('.comm_input').css('display', 'block');
-            $this_div.find('.comm_send_btn').css('display', 'inline-block');
-            $this_div.find('.comm_reply_btn').css('display', 'none');
-        });
-
-        $('.comment .comm_like_btn').on('click', function () {
-            $this_div = $(this).parent();
-            var id = $this_div.attr('id');
-
-            var data = {};
-            var uri = '/article_page/comment_like_ajax/' + id + '/' + user_id + '/';
-            myAjax(uri, data, commentLike, commentsReturnErr);
-
-            function commentLike(data){
-                var like_count = $this_div.find('.comm_like_count').text();
-                like_count = parseInt(like_count);
-                if (data == 1) {
-                    $this_div.find('.comm_like_count').text( like_count + 1 );
-                }
-            }
-        });
-
-    }
-
-    function commentsReturnErr() {
-        alert('Error');
-    }
-
-}
 
 
 function searchInput() {
