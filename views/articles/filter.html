@@ -37,7 +37,10 @@
 <table class="table table-striped" style="width: 100%;">
     <?php if ($data['articles']) {
                     foreach( $data['articles'] as $art ) { ?>
-    <p><b><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></b></p>
+    <p>
+        <span style="font-size: 12px; padding-right: 20px;  "><?= $art['art_date'] ?> </span>
+        <b><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></b>
+    </p>
     <?php }  } ?>
 </table>
 <hr>
@@ -45,10 +48,10 @@
 
 <p><b>Page: <?= $data['pagination']['currentPage'] ?></b></p>
 
-<a href="/articles/filter/?<?= $data['filter_url'] ?>&to_page=1" ><button class="btn btn-sm btn-primary">First</button></a>
+<a href="/articles/filter/?<?= $data['filter_url'] ?>&to_page=1" ><button class="btn btn-sm btn-default">First</button></a>
 
 <div style=" display: inline-block; position: relative;  ">
-    <button class="btn btn-sm btn-primary" style="width: 50px;" onclick="paginationTable()">. . .</button>
+    <button class="btn btn-sm btn-default" style="width: 50px;" onclick="paginationTable()">. . .</button>
 
     <div id="show_table_pagin" data_show=""  class="" style=" display: none; position:absolute; left: 0px; top:100% ; overflow: scroll; height: 70px; width: 50px;" >
         <table class="-table -table-striped" style="width: 40px; background: #ffffff; position: absolute;  ">
@@ -60,7 +63,7 @@
     </div>
 </div>
 
-<a href="/articles/filter/?<?= $data['filter_url'] ?>&to_page=<?= $data['pagination']['pagesCount'] ?>" ><button class="btn btn-sm btn-primary">Last (<?= $data['pagination']['pagesCount'] ?>)</button></a>
+<a href="/articles/filter/?<?= $data['filter_url'] ?>&to_page=<?= $data['pagination']['pagesCount'] ?>" ><button class="btn btn-sm btn-default">Last (<?= $data['pagination']['pagesCount'] ?>)</button></a>
 
 
 

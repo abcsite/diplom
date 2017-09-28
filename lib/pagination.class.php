@@ -7,11 +7,7 @@ class Pagination {
 
     public function __construct( $itemsCount = 100, $itemsPerPage = 5, $currentPage = 1, $showButtons = 5)
     {
-
         $pagesCount = ceil($itemsCount / $itemsPerPage);
-        
-        $itemsCount = $itemsCount;
-        $currentPage = $currentPage;
 
         if ($currentPage > $pagesCount) {
             $currentPage = $pagesCount;

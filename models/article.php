@@ -69,7 +69,11 @@ class Article extends Model
     }
 
 
-
+    /**
+     * @param $filter
+     * @param bool $only_published
+     * @return bool
+     */
     public function getArticlesFilter($filter, $only_published = false )
     {
         if (is_array($filter)) {
@@ -117,15 +121,17 @@ class Article extends Model
                 $order_by = ''  ;
             }
 
-            if ($filter['limit_start']) {
-                $limit_start = " LIMIT {$filter['limit_start']} "  ;
-            } else {
-                $limit_start = ''  ;
-            }
+            if ($filter['limit_count']) {
+                $limit_count = " LIMIT {$filter['limit_count']} "  ;
 
-            if ($filter['limit_offset']) {
-                $limit_offset = " , {$filter['limit_offset']} "  ;
+                if ($filter['limit_offset']) {
+                    $limit_offset = " OFFSET {$filter['limit_offset']} "  ;
+                } else {
+                    $limit_offset = ''  ;
+                }
+
             } else {
+                $limit_count = ''  ;
                 $limit_offset = ''  ;
             }
 
@@ -137,7 +143,7 @@ class Article extends Model
                     FROM categories_of_article ca JOIN articles a  ON  ca.id_article = a.id
                  ";
             $sql = "SELECT * FROM ({$select}) as sel WHERE {$in_cat}  AND  {$in_tag} AND {$date_min_str} AND {$date_max_str}
-                    {$order_by}  {$limit_start} {$limit_offset} ";
+                    {$order_by}  {$limit_count} {$limit_offset} ";
         } else { return false;}
 //deb($sql);
         $result = $this->db->query($sql);

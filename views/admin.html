@@ -4,14 +4,17 @@
     <title><?= Config::get('site_name') ?></title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">-->
+    <link rel="stylesheet" href="/lib/bootstrap-3.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/bootstrap-3.3.2-dist/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/style_bg_head.css">
     <link rel="stylesheet" href="/css/style_bg_page.css">
 
     <script src="/js/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+    <script src="/lib/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
     <script src="/js/admin.js"></script>
 
 
@@ -71,6 +74,10 @@
                 <li
                 <?php if (App::getRouter()->getController() == 'categories') {?>class="active"<?php } ?>><a
                     href="/admin/categories/">Categories</a>
+                </li>
+                <li
+                <?php if (App::getRouter()->getController() == 'comments') {?>class="active"<?php } ?>><a
+                    href="/admin/comments/">Comments</a>
                 </li>
 
                 <li

@@ -14,34 +14,30 @@ class ArticlesController extends Controller
         $this->data['pages'] = $this->model->getList(true);
     }
 
-    public function view()
-    {
-        $params = App::getRouter()->getParams();
-
-        if (isset($params[0])) {
-            $alias = strtolower($params[0]);
-            $result = $this->model->getByAlias($alias, true);
-//            var_dump($result);die;
-            if ($result) {
-                $this->data['page'] = $result;
-            } else {
-                Session::setFlash('This page does not exist.');
-            }
-        }
-    }
+//    public function view()
+//    {
+//        $params = App::getRouter()->getParams();
+//
+//        if (isset($params[0])) {
+//            $alias = strtolower($params[0]);
+//            $result = $this->model->getByAlias($alias, true);
+////            var_dump($result);die;
+//            if ($result) {
+//                $this->data['page'] = $result;
+//            } else {
+//                Session::setFlash('This page does not exist.');
+//            }
+//        }
+//    }
 
 
     public function filter_ajax(){
 
         if (isset($this->params[0])) {
 
-//            echo(json_encode($this->params[0]));
-//            die;
-
             $tags = explode(' ',$this->params[0]);
             if($tags) {
                 foreach ($tags as $tag) {
-//                $tag = 'сша';
                     $filter['tags'][0] = $tag;
                     $article_to_count = $this->model->getArticlesFilter($filter, true);
                     foreach ($article_to_count as $row) {
@@ -56,10 +52,8 @@ class ArticlesController extends Controller
                             }
                         }
                     }
-
                 }
             }
-//            echo(json_encode($a));
             echo(json_encode($res_tags));
             die;
         }
@@ -68,8 +62,6 @@ class ArticlesController extends Controller
     public function filter_set() {
 
         if($_POST){
-
-
 
             if($_POST['categ']) {
                 $filter['categ'] = $_POST['categ'];
@@ -90,21 +82,21 @@ class ArticlesController extends Controller
             $mm_ = $_POST['mm_'];
             $dd_ = $_POST['dd_'];
 
-            $date_max = $yyyy_ . '-' . $mm_ . '-' . $dd_ . ' ' . '00:00:00' ;
+            $date_max = $yyyy_ . '-' . $mm_ . '-' . $dd_ . ' ' . '11:59:59' ;
             $filter['date_max'] = $date_max ;
 
 
             $itemsPerPage = 5;
 
-            $filter['limit_start'] = null;
+            $filter['limit_count'] = null;
             $filter['limit_offset'] = null;
             $article_to_count = $this->model->getArticlesFilter($filter, true);
             $articles_count = count($article_to_count);
 
-            $pagination = new Pagination($articles_count, $itemsPerPage, $currentPage);
+            $pagination = new Pagination($articles_count, $itemsPerPage);
             $pagin = $pagination->result;
-            $filter['limit_start'] = $pagin['itemsStart'];
-            $filter['limit_offset'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
+            $filter['limit_count'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
+            $filter['limit_offset'] = $pagin['itemsStart'] - 1;
 
             $this->data['pagination'] = $pagin;
 
@@ -129,10 +121,8 @@ class ArticlesController extends Controller
             $filter_url = http_build_query($filter_arr);
             $this->data['filter_url'] = $filter_url;
 
-
-
             return  VIEWS_PATH . DS . 'articles' . DS . 'filter.html';
-//            Router::redirect('/articles/filter/');
+            
         }
 
 
@@ -176,15 +166,15 @@ class ArticlesController extends Controller
 
             $itemsPerPage = 5;
 
-            $filter['limit_start'] = null;
+            $filter['limit_count'] = null;
             $filter['limit_offset'] = null;
             $article_to_count = $this->model->getArticlesFilter($filter, true);
             $articles_count = count($article_to_count);
 
             $pagination = new Pagination($articles_count, $itemsPerPage, $currentPage);
             $pagin = $pagination->result;
-            $filter['limit_start'] = $pagin['itemsStart'];
-            $filter['limit_offset'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
+            $filter['limit_count'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
+            $filter['limit_offset'] = $pagin['itemsStart'] - 1;
 
             $this->data['pagination'] = $pagin;
 
