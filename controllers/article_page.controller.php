@@ -12,10 +12,16 @@ class Article_pageController extends Controller
     public function view()
     {
         if (isset($this->params[0])) {
+
+            if (Session::get('role') != 'admin') {
+                $this->model->visited_counter($this->params[0]);
+            }
+            
             $result = $this->model->getById($this->params[0]);
+
             if ($result) {
                 if (Session::get('role') != 'admin' && $result['is_published'] == '0') {
-                    Session::setFlash('This page does not exist.');
+                    Session::setFlash('Такой страницы не существует.');
                 } else {
                     $this->data['article_page'] = $result;
                     $tags = explode(',', $result['tags']);
@@ -30,11 +36,74 @@ class Article_pageController extends Controller
                     } else {
                         $this->data['user'] = null;
                     }
+                    
                 }
+
             }
 
+            /* Задаем параметры и получаем контент для левой части страницы статьи  */
+            $data_module_side_left = [];
+            $data_module_side_left['categories_url_base'] = '/home/';
+
+            $module_side_left = new Module_side_leftController( $data_module_side_left );
+            $this->data['module_side_left'] = $module_side_left->get_view();
+
+            /* Задаем параметры для модуля для получения списка ТОП-новостей за день в правой части страницы статьи  */
+            $data_module_articles_top_day = [];
+            $data_module_articles_top_day['filter']['date_min'] =  date('Y-m-d h:i:s', time() - 60 * 60 * 24);
+            $data_module_articles_top_day['filter']['order_by'][] = '-a.visited';
+            $data_module_articles_top_day['filter']['order_by'][] = '-a.date_published';
+            $data_module_articles_top_day['filter']['limit_count'] = 10;
+            $data_module_articles_top_day['filter']['limit_offset'] = 0;
+
+            $module_articles_top_day = new ModuleArticlesListController( $data_module_articles_top_day );
+            $data_top_day = $module_articles_top_day->get_articles_filter();
+
+            /* Задаем параметры для модуля для получения списка ТОП-новостей за неделю в правой части страницы статьи  */
+            $data_module_articles_top_week = [];
+            $data_module_articles_top_week['filter']['date_min'] =  date('Y-m-d h:i:s', time() - 60 * 60 * 24 * 7 );
+            $data_module_articles_top_week['filter']['order_by'][] = '-a.visited';
+            $data_module_articles_top_week['filter']['order_by'][] = '-a.date_published';
+            $data_module_articles_top_week['filter']['limit_count'] = 10;
+            $data_module_articles_top_week['filter']['limit_offset'] = 0;
+
+            $module_articles_top_week = new ModuleArticlesListController( $data_module_articles_top_week );
+            $data_top_week = $module_articles_top_week->get_articles_filter();
+
+            /* Задаем параметры для модуля для получения списка ТОП-новостей за месяц в правой части страницы статьи  */
+            $data_module_articles_top_month = [];
+            $data_module_articles_top_month['filter']['date_min'] =  date('Y-m-d h:i:s', time() - 60 * 60 * 24 * 30 );
+            $data_module_articles_top_month['filter']['order_by'][] = '-a.visited';
+            $data_module_articles_top_month['filter']['order_by'][] = '-a.date_published';
+            $data_module_articles_top_month['filter']['limit_count'] = 10;
+            $data_module_articles_top_month['filter']['limit_offset'] = 0;
+
+            $module_articles_top_month = new ModuleArticlesListController( $data_module_articles_top_month );
+            $data_top_month = $module_articles_top_month->get_articles_filter();
+
+            /* Задаем параметры для модуля для получения списка ТОП-новостей за все время в правой части страницы статьи  */
+            $data_module_articles_top_all = [];
+            $data_module_articles_top_all['filter']['order_by'][] = '-a.visited';
+            $data_module_articles_top_all['filter']['order_by'][] = '-a.date_published';
+            $data_module_articles_top_all['filter']['limit_count'] = 10;
+            $data_module_articles_top_all['filter']['limit_offset'] = 0;
+
+            $module_articles_top_all = new ModuleArticlesListController( $data_module_articles_top_all );
+            $data_top_all = $module_articles_top_all->get_articles_filter();
+
+            /* Получаем контент для правой части страницы статьи  */
+            $view_data_side_right = [];
+            $view_data_side_right['top_day'] = $data_top_day;
+            $view_data_side_right['top_week'] = $data_top_week;
+            $view_data_side_right['top_month'] = $data_top_month;
+            $view_data_side_right['top_all'] = $data_top_all;
+
+            $path_side_right = VIEWS_PATH . DS .'modules' . DS . 'side_right.html';
+            $view_object_side_right = new View( $view_data_side_right, $path_side_right);
+            $this->data['module_side_right'] = $view_object_side_right->render();
+
         } else {
-            Session::setFlash('This page does not exist.');
+            Session::setFlash('Такая страница не существует.');
         }
     }
 
@@ -61,6 +130,8 @@ class Article_pageController extends Controller
             foreach ($comments_line as $key => $row) {
                 if (!$row['date']) {
                     $comments_line[$key]['date'] = '';
+                } else {
+                    $comments_line[$key]['date'] = my_format_date( $row['date'] );
                 }
             }
         }

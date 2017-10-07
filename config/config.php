@@ -1,6 +1,6 @@
 <?php
 
-Config::set('site_name','My Site');
+Config::set('site_name','pro100news');
 
 Config::set('languages', array('en','fr'));
 
@@ -23,6 +23,8 @@ Config::set('db.db_name', 'diplom');
 Config::set('salt', 'jd7sj3sdkd964he7e');
 
 Config::set('salt', 'jd7sj3sdkd964he7e');
+
+Config::set('pagination_count_per_page', 10);
 
 
 

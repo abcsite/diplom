@@ -3,8 +3,6 @@
 class Comment extends Model
 {
 
-
-
     public function getListArticles()
     {
         $sql = "SELECT  a.* , count(c.is_published) as comments_count 

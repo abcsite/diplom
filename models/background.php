@@ -5,7 +5,6 @@ class Background extends Model
 
     public function replaceImages($name, $data = null)
     {
-//var_dump($data['name']);die;
         $uploadfile = BACKGROUNDS_IMG_PATH . DS  . $name;
 
         $result = true;

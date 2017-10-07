@@ -10,7 +10,7 @@ class ContactsController extends Controller {
     public function index() {
         if ( $_POST) {
             if ( $this->model->save( $_POST)) {
-                Session::setFlash('Thank you! Your message was sent successfully!');
+                Session::setFlash('Спасибо! Ваше сообщение успешно отправлено.');
             }
         }
     }
@@ -30,16 +30,16 @@ class ContactsController extends Controller {
             $id = isset($_POST['id']) ? $_POST['id'] : null ;
             $result = $this->model->save($_POST, $id);
             if ( $result) {
-                Session::set('flash_message_change', 'Message was saved.');
+                Session::set('flash_message_change', 'Сообщение сохранено');
                 Router::redirect('/admin/contacts/');
             } else {
-                Session::setFlash('Error.');
+                Session::setFlash('Ошибка');
             }
         } else {
             if ( isset($this->params[0]) ) {
                 $this->data['message'] = $this->model->getById($this->params[0]);
             } else {
-                Session::set('flash_message_change', 'Wrong message id.');
+                Session::set('flash_message_change', 'Неправильное id сообщения');
                 Router::redirect('/admin/contacts/');
             }
         }
@@ -49,7 +49,7 @@ class ContactsController extends Controller {
         if ( isset( $this->params[0])) {
             $result = $this->model->delete($this->params[0]);
             if ( $result) {
-                Session::set('flash_message_change', 'Message was deleted.');
+                Session::set('flash_message_change', 'Сообщение удалено');
             } else {
                 Session::set('flash_message_change', 'Error!');
             }

@@ -21,13 +21,12 @@ class UsersController extends  Controller {
                 Session::set('role', $user['role']);
 
                 if ( Session::get('role') == 'admin') {
-                    Router::redirect('/admin/home/');
+                    Router::redirect('/admin/articles/');
                 } else {
                     Router::redirect('/home/');
                 }
             }
-//            Router::redirect('/admin/');
-        } 
+        }
     }
 
     
@@ -52,7 +51,7 @@ class UsersController extends  Controller {
                 }
                 $result = $this->model->activate($changed_data);
                 if (!$result) {
-                    Session::setFlash('Error!');
+                    Session::setFlash('Ошибка!');
                 }
             }
         }
@@ -64,28 +63,28 @@ class UsersController extends  Controller {
 
         if ( $_POST ) {
             
-            // В этом массиве ключи (первого уровня вложенности) соответствуют названиям полей формы, значения из которых нужно обрабатывать ('login', 'email' ...).
-            // Ключи второго уровня вложенности задают названия методов, с помощью которых будут обрабатываться значения из соответствующих полей формы ('filter_clean', 'valid_str_length' ...).
-            // Значениями для ключей второго уровня вложенности должны быть массивы с данными, которые будут передаваться в качестве параметров в соответствующий метод.
-            // Для методов валидации (имеют в названии префикс 'valid_')  в массиве параметров может задаваться ключ 'err_message' и его значение (сообщение),
-            // которое будет выводиться пользователю в случае ошибки при валидации значения соответствующего поля формы.
+            /* В этом массиве ключи (первого уровня вложенности) соответствуют названиям полей формы, значения из которых нужно обрабатывать ('login', 'email' ...).
+             Ключи второго уровня вложенности задают названия методов, с помощью которых будут обрабатываться значения из соответствующих полей формы ('filter_clean', 'valid_str_length' ...).
+             Значениями для ключей второго уровня вложенности должны быть массивы с данными, которые будут передаваться в качестве параметров в соответствующий метод.
+             Для методов валидации (имеют в названии префикс 'valid_')  в массиве параметров может задаваться ключ 'err_message' и его значение (сообщение),
+             которое будет выводиться пользователю в случае ошибки при валидации значения соответствующего поля формы.*/
             $options = ['login' => ['filter_clean' => [],
                                     'filter_sql' => [],
                                     'valid_str_length' => [ $login_min = 4,
                                                             $login_max = 35,
-                                                           'err_message' => 'The number of characters must be within '. $login_min.' - '.$login_max.' .' ],
+                                                           'err_message' => 'Количество символов должно быть в пределах '. $login_min.' - '.$login_max.' .' ],
                                     'valid_login_is_not_used' => [ App::$db ,
-                                                              'err_message' => 'This login is used'] ],
+                                                              'err_message' => 'Этот логин уже используется'] ],
                         'email' => ['filter_clean' => [],
                                     'filter_sql' => [],
                                     'valid_str_length' => [ $email_min = 4,
                                                             $email_max = 100,
-                                                            'err_message' => 'The number of characters must be within '. $email_min.' - '.$email_max.' .' ],
-                                    'valid_email' => [ 'err_message' => 'Incorrect email.' ] ],
+                                                            'err_message' => 'Некорректный email'. $email_min.' - '.$email_max.' .' ],
+                                    'valid_email' => [ 'err_message' => 'Некорректный email' ] ],
                         'password' => ['filter_clean' => [],
                                        'valid_str_length' => [ $password_min = 5,
                                                                $password_max = 32,
-                                                               'err_message' => 'The number of characters must be within '. $password_min.' - '.$password_max.' .' ],
+                                                               'err_message' => 'Количество символов должно быть в пределах '. $password_min.' - '.$password_max.' .' ],
                                        'filter_hash_md5' => []]
                          ] ;
             
@@ -97,14 +96,14 @@ class UsersController extends  Controller {
                 $result_check = $this->model->register( $valid_data['data'] );
 
                 if ($result_check) {
-                    Session::setFlash('You have been successfully registered.');
+                    Session::setFlash('Вы успешно зарегистрированы.');
                     $this->data['hide_html_element'] = 'hide';
-                    
+
                     return;
                 }
             }
 
-            Session::setFlash('Registration error.');
+            Session::setFlash('Ошибка при регистрации.');
             $this->data['valid_errors'] = $valid_data['err_messages'];
             $this->data['hide_html_element'] = '';
             $this->data['form_data'] = $_POST;

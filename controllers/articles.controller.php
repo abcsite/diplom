@@ -14,257 +14,198 @@ class ArticlesController extends Controller
         $this->data['pages'] = $this->model->getList(true);
     }
 
-//    public function view()
-//    {
-//        $params = App::getRouter()->getParams();
-//
-//        if (isset($params[0])) {
-//            $alias = strtolower($params[0]);
-//            $result = $this->model->getByAlias($alias, true);
-////            var_dump($result);die;
-//            if ($result) {
-//                $this->data['page'] = $result;
-//            } else {
-//                Session::setFlash('This page does not exist.');
-//            }
-//        }
-//    }
 
 
-    public function filter_ajax(){
+        /* Обработка поиска по статьям  (поиск одновременно и по тегам статей и по заголовкам статей) */
+    public function search_ajax()
+    {
 
         if (isset($this->params[0])) {
+            
+            $inp = $this->params[0];
+            $inp_words = explode(' ', $inp);
+            /* Максимальное количество выводимых пользователю найденных слов и минимальная длина вводимых пользователем слов, которые будут обрабатываться */
+            $max_count = 10;
+            $min_length = 1;
+            
+            if ($inp_words) {
 
-            $tags = explode(' ',$this->params[0]);
-            if($tags) {
-                foreach ($tags as $tag) {
-                    $filter['tags'][0] = $tag;
-                    $article_to_count = $this->model->getArticlesFilter($filter, true);
-                    foreach ($article_to_count as $row) {
-                        $tags_str = $row['art_tags'];
-                        $tags_arr = explode(',', $tags_str);
-                        $res_tags = [];
-                        foreach ($tags_arr as $word) {
-                            if (strstr($word, $tag)) {
-                                $art_id = $article_to_count['art_id'];
-                                $arr = ['id' => $art_id, 'word' => $word];
-                                $res_tags[] = $arr;
+                /* Поиск в тегах статей */
+                $res_tags = [];
+                foreach ($inp_words as $word) {
+
+
+                    if (mb_strlen($word) >= $min_length) {
+                        $filter['tags'][0] =  $word;
+                        $articles_has_word = $this->model->getArticlesFilter($filter, true);
+
+                        foreach ($articles_has_word as $row) {
+                            $tags_str = $row['art_tags'];
+                            $tags_arr = explode(',', $tags_str);
+
+                            foreach ($tags_arr as $tag) {
+                                if (strstr($tag,  $word)) {
+                                    $res_tags[$tag] = $tag;
+                                }
                             }
                         }
                     }
                 }
-            }
-            echo(json_encode($res_tags));
-            die;
-        }
-    }
-    
-    public function filter_set() {
-
-        if($_POST){
-
-            if($_POST['categ']) {
-                $filter['categ'] = $_POST['categ'];
-//                $filter['categ'] = ['111111', '222222', '333333'];
-            }
-            if($_POST['tags']) {
-                $filter['tags'] = $_POST['tags'];
-            }
-
-            $yyyy = $_POST['yyyy'];
-            $mm = $_POST['mm'];
-            $dd = $_POST['dd'];
-
-            $date_min = $yyyy . '-' . $mm . '-' . $dd . ' ' . '00:00:00';
-            $filter['date_min'] = $date_min ;
-
-            $yyyy_ = $_POST['yyyy_'];
-            $mm_ = $_POST['mm_'];
-            $dd_ = $_POST['dd_'];
-
-            $date_max = $yyyy_ . '-' . $mm_ . '-' . $dd_ . ' ' . '11:59:59' ;
-            $filter['date_max'] = $date_max ;
-
-
-            $itemsPerPage = 5;
-
-            $filter['limit_count'] = null;
-            $filter['limit_offset'] = null;
-            $article_to_count = $this->model->getArticlesFilter($filter, true);
-            $articles_count = count($article_to_count);
-
-            $pagination = new Pagination($articles_count, $itemsPerPage);
-            $pagin = $pagination->result;
-            $filter['limit_count'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
-            $filter['limit_offset'] = $pagin['itemsStart'] - 1;
-
-            $this->data['pagination'] = $pagin;
-
-
-
-//
-            $article_filtered = $this->model->getArticlesFilter($filter, true);
-
-            $categories = $this->model->getCategoryByIds($_POST['categ']);
-            $filter['categ'] = $categories;
-
-            $this->data['articles'] = $article_filtered;
-            $this->data['filter'] = $filter;
-
-
-            $filter_arr = [
-                'categ' => $_POST['categ'],
-                'tags' => $_POST['tags'],
-                'date_min' => $date_min,
-                'date_max' => $date_max
-            ] ;
-            $filter_url = http_build_query($filter_arr);
-            $this->data['filter_url'] = $filter_url;
-
-            return  VIEWS_PATH . DS . 'articles' . DS . 'filter.html';
-            
-        }
-
-
-        $this->data['filter']['categ_all'] = $this->model->getCategories();
-
-        $tags_list_str = $this->model->getTagsAll();
-        $res_tags = [];
-        foreach ($tags_list_str as $row) {
-            $tags_str = $row['tags'];
-            $tags_arr = explode(',', $tags_str);
-            foreach ($tags_arr as $word) {
-                if ( !in_array( $word , $res_tags)){
-                    $res_tags[] =  $word ;
+                $new_res_tags = [];
+                foreach ($res_tags as $kay => $val) {
+                    $new_res_tags[] = $kay;
                 }
+
+                /* Поиск в заголовках статей */
+                $articles = $this->model->searchWordsInTitleOfArticles($inp_words, $max_count, $min_length, true);
+
+                $res = [];
+                $res['tags'] = $new_res_tags;
+                $res['articles'] = $articles;
+                $res['max_count'] = $max_count;
+                $res['min_length'] = $min_length;
+
+                echo(json_encode($res));
             }
         }
-        $this->data['filter']['tags_all'] = $res_tags;
-
+        die;
     }
 
-    
+
     public function filter()
     {
-        if ($_GET) {
+        /* Задаем параметры и получаем контент для центральной части страницы поиска (список найденных статей) */
+        $data_module_articles = [];
+        $data_module_articles['articles_url_base'] = '/articles/filter/';
+        $data_module_articles['filter'] = $_GET;
+        $data_module_articles['filter']['order_by'][] = '-a.date_published';
+        $data_module_articles['filter']['order_by'][] = '-a.title';
 
-            if ($_GET['to_page']) {
-                $currentPage = $_GET['to_page'];
-            } else {
-                $currentPage = 1;
-            }
+        $module_articles_list = new ModuleArticlesListController($data_module_articles);
+        $this->data['module_articles_list'] = $module_articles_list->get_view();
 
-            if ($_GET['filter_url']) {
-                $filter = $_GET['filter_url'];
-            } else {
-                $filter = $_GET;
-            }
-
-
-            $filter['order_by'] = 'art_date';
-
-
-            $itemsPerPage = 5;
-
-            $filter['limit_count'] = null;
-            $filter['limit_offset'] = null;
-            $article_to_count = $this->model->getArticlesFilter($filter, true);
-            $articles_count = count($article_to_count);
-
-            $pagination = new Pagination($articles_count, $itemsPerPage, $currentPage);
-            $pagin = $pagination->result;
-            $filter['limit_count'] = $pagin['itemsEnd'] - $pagin['itemsStart'] + 1;
-            $filter['limit_offset'] = $pagin['itemsStart'] - 1;
-
-            $this->data['pagination'] = $pagin;
-
-
-            $article_list = $this->model->getArticlesFilter($filter, true);
-
-            if ($article_list) {
-                $this->data['articles'] = $article_list;
-
-                $categories = $this->model->getCategoryByIds($_GET['categ']);
-                $this->data['filter']['categ'] = $categories;
-                $this->data['filter']['tags'] = $_GET['tags'];
-                $this->data['filter']['date_min'] = $_GET['date_min'];
-                $this->data['filter']['date_max'] = $_GET['date_max'];
-
-                $filter_arr = [
-                    'categ' => $_GET['categ'],
-                    'tags' => $_GET['tags'],
-                    'date_min' => $_GET['date_min'],
-                    'date_max' => $_GET['date_max']
-                ] ;
-                $filter_url = http_build_query($filter_arr);
-                $this->data['filter_url'] = $filter_url;
-            }
+        /* Если выбрана категория , передаем ее название в заголовок страницы */
+        if ($_GET['categ'] && count($_GET['categ']) === 1) {
+            $categ = $module_articles_list->getModel()->getCategoryByIds($_GET['categ']);
+            $this->data['selected_categ'] = $categ[0]['category_name'];
         }
+
+        /* Задаем параметры и получаем контент для левой части страницы поиска (список категорий) */
+        $data_module_side_left = [];
+        $data_module_side_left['categories_url_base'] = '/home/';
+        $module_side_left = new Module_side_leftController($data_module_side_left);
+        $this->data['module_side_left'] = $module_side_left->get_view();
+
+        /* Задаем параметры для модуля для получения списка ТОП-новостей за день в правой части страницы поиска */
+        $data_module_articles_top_day = [];
+        $data_module_articles_top_day['filter']['date_min'] = date('Y-m-d h:i:s', time() - 60 * 60 * 24);
+        $data_module_articles_top_day['filter']['order_by'][] = '-a.visited';
+        $data_module_articles_top_day['filter']['order_by'][] = '-a.date_published';
+        $data_module_articles_top_day['filter']['limit_count'] = 10;
+        $data_module_articles_top_day['filter']['limit_offset'] = 0;
+
+        $module_articles_top_day = new ModuleArticlesListController($data_module_articles_top_day);
+        $data_top_day = $module_articles_top_day->get_articles_filter();
+
+        /* Задаем параметры для модуля для получения списка ТОП-новостей за неделю в правой части страницы поиска  */
+        $data_module_articles_top_week = [];
+        $data_module_articles_top_week['filter']['date_min'] = date('Y-m-d h:i:s', time() - 60 * 60 * 24 * 7);
+        $data_module_articles_top_week['filter']['order_by'][] = '-a.visited';
+        $data_module_articles_top_week['filter']['order_by'][] = '-a.date_published';
+        $data_module_articles_top_week['filter']['limit_count'] = 10;
+        $data_module_articles_top_week['filter']['limit_offset'] = 0;
+
+        $module_articles_top_week = new ModuleArticlesListController($data_module_articles_top_week);
+        $data_top_week = $module_articles_top_week->get_articles_filter();
+
+        /* Задаем параметры для модуля для получения списка ТОП-новостей за месяц в правой части страницы поиска  */
+        $data_module_articles_top_month = [];
+        $data_module_articles_top_month['filter']['date_min'] = date('Y-m-d h:i:s', time() - 60 * 60 * 24 * 30);
+        $data_module_articles_top_month['filter']['order_by'][] = '-a.visited';
+        $data_module_articles_top_month['filter']['order_by'][] = '-a.date_published';
+        $data_module_articles_top_month['filter']['limit_count'] = 10;
+        $data_module_articles_top_month['filter']['limit_offset'] = 0;
+
+        $module_articles_top_month = new ModuleArticlesListController($data_module_articles_top_month);
+        $data_top_month = $module_articles_top_month->get_articles_filter();
+
+        /* Задаем параметры для модуля для получения списка ТОП-новостей за все время в правой части страницы статьи  */
+        $data_module_articles_top_all = [];
+        $data_module_articles_top_all['filter']['order_by'][] = '-a.visited';
+        $data_module_articles_top_all['filter']['order_by'][] = '-a.date_published';
+        $data_module_articles_top_all['filter']['limit_count'] = 10;
+        $data_module_articles_top_all['filter']['limit_offset'] = 0;
+
+        $module_articles_top_all = new ModuleArticlesListController( $data_module_articles_top_all );
+        $data_top_all = $module_articles_top_all->get_articles_filter();
+
+
+        /* Получаем контент для правой части страницы поиска  */
+        $view_data_side_right = [];
+        $view_data_side_right['top_day'] = $data_top_day;
+        $view_data_side_right['top_week'] = $data_top_week;
+        $view_data_side_right['top_month'] = $data_top_month;
+        $view_data_side_right['top_all'] = $data_top_all;
+
+        $path_side_right = VIEWS_PATH . DS . 'modules' . DS . 'side_right.html';
+        $view_object_side_right = new View($view_data_side_right, $path_side_right);
+        $this->data['module_side_right'] = $view_object_side_right->render();
+
+
     }
-
-
-
 
 
     public function admin_index()
     {
         $this->data['articles'] = $this->model->getList();
     }
-    
+
 
     public function admin_edit()
     {
 
-//        var_dump($_POST);
-//        var_dump($_FILES);  die;
-
         if ($_POST) {
-            $id = ($_POST['id']) ? $_POST['id'] : null;
+            $article_id = ($_POST['id']) ? $_POST['id'] : null;
 
-            $result = $this->model->save($_POST, $id);
+            /* Сохраняем основные данные статьи */
+            $result = $this->model->save($_POST, $article_id);
 
-            if ($_FILES['images']) {
-                $result = $result && $this->model->saveImages($_FILES['images'], $id);
+            /* Если добавлена новая статья, получаем ее id */
+            $new_article_id = $this->model->getMaxValue('articles', 'id');
+            if (!$article_id) {
+                $article_id = $new_article_id;
             }
 
-            if ($_FILES['image']) {
-                $result = $result && $this->model->replaceImages($_FILES['image'], $id);
+            /* Удаляем неиспользуемые в статье изображения, обновляем ссылки на изображения, получаем новый текст статьи (HTML-разметку) */
+            $new_text = $this->model->checkImagesByHTML($_POST, $article_id);
+
+            $_POST['text'] = $new_text;
+
+            /* Обновляем запись в БД для статьи с обновленным текстом (HTML-разметкой) */
+            $result = $result && $this->model->save($_POST, $article_id);
+
+            /* Обновляем в БД категории статьи */
+            if ($_POST['categories']) {
+                $categories_id = $_POST['categories'];
+                $result = $result && $this->model->update_categ_of_article($categories_id, $article_id);
             }
 
-
-            if (!$id) {
-                $newId = $this->model->getMaxValue('articles', 'id');
-
-                if ($_POST['categories']) {
-                    foreach ($_POST['categories'] as $categ) {
-                        $result = $result && $this->model->add_cat($categ, $newId);
-                    }
-                }
-                Router::redirect('/admin/articles/edit/' . $newId . '/');
+            if (!$result) {
+                Session::setFlash('Ошибка сохранения статьи');
             }
 
-//            if ( $result) {
-//                Session::setFlash('Article was saved.');
-//            } else {
-//                Session::setFlash('Error.');
-//            }
-
-//            Router::redirect('/admin/articles/edit/');
-
+            Router::redirect('/admin/articles/edit/' . $article_id . '/');
         }
 
         if (isset($this->params[0])) {
+            /* В случае перехода на данную страницу сайта получаем данные для представления этой страницы */
             $this->data['article'] = $this->model->getById($this->params[0]);
-
             $this->data['article_images'] = $this->model->getImgsByArticleId($this->params[0]);
 
-        } else {
-
-//            Session::setFlash('Wrong article id.');
-//            Router::redirect('/admin/articles/');
         }
     }
 
+    /* Удаляем статью и связанные с ней изображения */
     public function admin_delete()
     {
         if (isset($this->params[0])) {
@@ -272,28 +213,29 @@ class ArticlesController extends Controller
             $article_images = $this->model->getImgsByArticleId($this->params[0]);
 
             foreach ($article_images as $image) {
-                $result = $result && $this->model->del_image($image['full_name']);
+                $this->model->del_image($image['full_name']);
             }
 
             $result = $this->model->delete($this->params[0]);
 
             if ($result) {
-                Session::setFlash('Article was deleted.');
+                Session::setFlash('Статья была удалена');
             } else {
-                Session::setFlash('Error.');
+                Session::setFlash('Ошибка.');
             }
         }
         Router::redirect('/admin/articles/');
     }
+
 
     public function admin_deleteimage()
     {
         if (isset($this->params[0])) {
             $result = $this->model->del_image($this->params[0]);
             if ($result) {
-                Session::setFlash('Image was deleted.');
+                Session::setFlash('Изображение было удалено.');
             } else {
-                Session::setFlash('Error.');
+                Session::setFlash('Ошибка');
             }
         }
         Router::redirect('/admin/articles/edit/' . $this->params[1]);
@@ -303,7 +245,7 @@ class ArticlesController extends Controller
     public function admin_categories_get_ajax()
     {
         $categories = $this->model->getCategories();
-        $categories_line = structure_to_line($categories, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id' ]);
+        $categories_line = structure_to_line($categories, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id']);
 
         if (isset($this->params[0])) {
             $article_categories = $this->model->getCategByArticleId($this->params[0]);
@@ -318,22 +260,54 @@ class ArticlesController extends Controller
         die;
     }
 
-    public function admin_add_categ_ajax()
+    public function admin_update_categ_ajax()
     {
-        if (isset($this->params[0]) && isset($this->params[1])) {
-            $result = $this->model->add_cat($this->params[0], $this->params[1]);
-            echo($result);
+        $categories_all = $this->model->getCategories();
+        $categories_all_line = structure_to_line($categories_all, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id']);
+        $article_categories_id = $_POST['article_categories'];
+
+        if ($_POST['operation'] == 'add') {
+            $article_categories_id[] = $this->params[0];
+            $parents_categories_by_id = structure_to_line($categories_all, $options = ['begin_id' => $this->params[0], 'nested_level' => 0, 'field_id' => 'parent_id', 'field_id_parent' => 'id']);
+            foreach ($parents_categories_by_id as $parent_categ) {
+                $article_categories_id[] = $parent_categ['id'];
+            }
+        } elseif ($_POST['operation'] == 'delete') {
+            $childs_categories_by_id = structure_to_line($categories_all, $options = ['begin_id' => $this->params[0], 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id']);
+            $childs_categories_by_id = array_column($childs_categories_by_id, 'id');
+            $childs_categories_by_id[] = $this->params[0];
+
+            $new_categories_of_article = [];
+            foreach ($article_categories_id as $categ) {
+                if (!in_array($categ, $childs_categories_by_id))
+                    $new_categories_of_article[] = $categ;
+            }
+            $article_categories_id = $new_categories_of_article;
+//            $childs_categories_by_id[] = $this->params[0];
+//            $article_categories_id = array_diff($article_categories_id, $childs_categories_by_id);
+        }
+
+        $data['categories'] = $categories_all_line;
+        $data['article_categories'] = $article_categories_id;
+        echo(json_encode($data));
+        die;
+    }
+
+
+    /* Сохранение добавленного пользователем в статью изображения как временного файла и возвращение ссылки на него в редактор TinyMCE */
+    public function admin_tinymce_upload_image_to_article()
+    {
+        if ($_FILES['image_tinymce'] && isset($this->params[0])) {
+
+            $temp_images = $this->model->saveTempImages($_FILES['image_tinymce'], $this->params[0]);
+
+            $data = [];
+            $data['location'] = '/webroot/img/articles/' . $temp_images[0];
+            $data_json = json_encode($data);
+            echo $data_json;
         }
         die;
     }
 
-    public function admin_delete_categ_ajax()
-    {
-        if (isset($this->params[0]) && isset($this->params[1])) {
-            $result = $this->model->delete_cat($this->params[0], $this->params[1]);
-            echo($result);
-        }
-        die;
-    }
 
 }

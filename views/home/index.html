@@ -1,58 +1,65 @@
+<div class="side_wrap left">
+    <?= $data['module_side_left'] ?>
+</div>
 
-<div class="slider__list slick-slider" style="width: 700px;height: 400px;">
-    <div class="slider__item" style=" width: 400px; display: inline-block; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/28_laferrari-apera-final-edition-210-02-218x150.jpg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/26_hyperloop-one-winners-1-218x150.jpeg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/21_hyperloop-one-winners-1-218x150.jpeg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/40_iss-bact-1_1024-218x150.jpg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/56_moon-water-map-2-218x150.jpg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/61_tesla-model-3-first-ride-002-1020.0.0-218x150.jpg" alt="">
-    </div>
-    <div class="slider__item" style=" width: 400px; display: none; position: absolute;">
-        <img class="slider__img" style="width: 100%; display: inline-block;"
-             src="/webroot/img/articles/32_lilium-jet-funding-1-218x150.jpg" alt="">
-    </div>
+<div class="main_content">
+
+    <?php if ($data['images']) { ?>
+
+        <div id="myCarousel" class="slider__list carousel slide" data-ride="carousel"  >
+            <?php $count = count($data['images']); ?>
+            <ol class="carousel-indicators">
+                <?php for($i = 0; $i < $count; $i++) { ?>
+                <li data-target="#myCarousel" data-slide-to="<?= $i ?>" <?php if ($i == 0) {echo ' class="active" ' ;}; ?>  ></li>
+                <?php } ?>
+            </ol>
+
+            <div class="carousel-inner" >
+
+                <?php for($i = 0; $i < $count; $i++) { ?>
+                    <div class="slider__item item <?php if ($i == 0) { echo 'active'; }; ?>  "   style="">
+                        <img class="slider__img"  src="/webroot/img/articles/<?= $data['images'][$i]['img'] ?>" alt="">
+                        <div class="container">
+                            <div class="carousel-caption">
+                                <p><a  href="/article_page/view/<?= $data['images'][$i]['article']['art_id'] ?>/"><?= $data['images'][$i]['article']['art_title'] ?></a></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+
+            </div>
+
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+
+        </div>
+        <script>
+            $('.carousel').carousel({
+                interval: 5000,
+                pause: 'hover',
+                wrap: true
+            });
+        </script>
+
+    <?php } ?>
 
 
+    <?php if ( $data['selected_categ'] ) { ?>
+    <h1> <?= $data['selected_categ'] ?> </h1>
+    <?php } else { ?>
+    <h1> Последние новости </h1>
+    <?php } ?>
 
+    <hr>
+
+    <?= $data['module_articles_list'] ?>
 
 </div>
 
-
-<h3>Last Articles</h3><br/>
-
-
-
-<table class="table table-striped" style="width: 100%;">
-    <?php if ($data['categ_articles']) {
-        foreach( $data['categ_articles'] as $cat_id => $categ) { ?>
-        <hr>
-
-            <h4><b><a href="/articles/filter/?categ[]=<?= $cat_id ?>" > <?= $categ['cat_name'] ?> </a></b></h4>
-            <?php if ($categ['articles']) {
-                    foreach( $categ['articles'] as $art ) { ?>
-                    <p><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></p>
-            <?php }  } ?>
-    <?php } ?>
-    <?php } ?>
-</table>
-
-<br/>
-
-
+<div class="side_wrap right">
+    <?= $data['module_side_right'] ?>
+</div>

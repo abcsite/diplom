@@ -15,7 +15,8 @@ try {
     App::run($_SERVER['REQUEST_URI']);
 
 } catch (Exception $e) {
-    echo $e->getMessage();
+//    echo $e->getMessage();
+    echo "Error!";
 }
 
 

@@ -11,10 +11,6 @@ class BackgroundsController extends Controller
 
     public function admin_edit()
     {
-
-//        var_dump($_POST);
-//        var_dump($_FILES);  die;
-
         $bg_head_name = 'bg_head';
         $bg_page_name = 'bg_page';
 
@@ -22,7 +18,13 @@ class BackgroundsController extends Controller
 
         if($_POST) {
             $result = $this->model->set_bg_color($bg_head_name, $_POST[$bg_head_name . '_color']);
-            $result = $this->model->set_bg_color($bg_page_name, $_POST[$bg_page_name . '_color']);
+            $result = $result  && $this->model->set_bg_color($bg_page_name, $_POST[$bg_page_name . '_color']);
+
+            if ( $result) {
+                Session::setFlash('Изменения были сохранены');
+            } else {
+                Session::setFlash('Ошибка');
+            }
 
         }
         
@@ -38,14 +40,9 @@ class BackgroundsController extends Controller
         $this->data[$bg_head_name . '_color'] =  $this->model->get_bg_color($bg_head_name . '_color');
         $this->data[$bg_page_name . '_color'] =  $this->model->get_bg_color($bg_page_name . '_color');
 
-//            if ( $result) {
-//                Session::setFlash('Article was saved.');
-//            } else {
-//                Session::setFlash('Error.');
-//            }
-
-//            Router::redirect('/admin/articles/edit/');
-
+            if ( !$result) {
+                Session::setFlash('Ошибка');
+            }
 
     }
 
@@ -56,7 +53,7 @@ class BackgroundsController extends Controller
             $result = $this->model->deleteImages($this->params[0]);
 
             if ($result) {
-                Session::setFlash('Image was deleted.');
+                Session::setFlash('Изображение было удалено');
             } else {
                 Session::setFlash('Error.');
             }

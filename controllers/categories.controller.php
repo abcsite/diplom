@@ -11,7 +11,7 @@ class CategoriesController extends Controller
 
     public function admin_index()
     {
-//        $this->data['categories'] = $this->model->getList();
+        /* Список категорий на страницу загружается через AJAX методом admin_categories_get_ajax(). А этот метод необходим для перенаправления роутером на соответствующее представление */
     }
 
     public function admin_add()

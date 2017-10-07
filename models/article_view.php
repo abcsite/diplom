@@ -11,9 +11,21 @@ class Article_view extends Model
         return isset($result[0]) ? $result[0] : null;
     }
 
+    public function visited_counter($id)
+    {        
+        $id = (int)$id;
+        $sql = "
+                update articles
+                  set visited = visited + 1
+                  where id = {$id}
+            ";
+        $result = $this->db->query($sql);
+        return isset($result[0]) ? $result[0] : null;
+    }
+
     public function getCommentsByArticleId($id_article = 1, $only_published_comments = false)
     {
-        $id = (int)$id;
+        $id_article = (int)$id_article;
         $only_published = $only_published_comments ? ' AND c.is_published = 1 ' : '';
         $sql = "select  c.* , u.* , count(like_user) as like_count 
                       FROM comments c JOIN users u ON id = id_user AND id_article = '{$id_article}'  {$only_published}
@@ -86,10 +98,8 @@ class Article_view extends Model
         $user_id = (int)$data['id_user'];
         $article_id = (int)$data['id_article'];
         $text = $this->db->escape($data['text']);
-//        $date = $this->db->escape($data['date']);
-//        $like_ok = $this->db->escape($data['like_ok']);
-
-        if (!$comment_id) {  // Add new record
+        
+        if (!$comment_id) {  
             $date = date("Y-m-d H:i:s");
 
             $sql = "

@@ -6,9 +6,7 @@ class App {
 
     public static $db;
 
-    /**
-     * @return mixed
-     */
+
     public static function getRouter(){
         return self::$router;
     }
@@ -27,12 +25,9 @@ class App {
         if ( $layout == 'admin' && Session::get('role') != 'admin') {
             Session::destroy();
             Router::redirect('/users/login');
-//            if ( $controller_method != 'admin_login') {
-//                Router::redirect('/admin/users/login');
-//            }
+
         }
 
-        // Calling controller's method
         $controller_object = new $controller_class();
         if ( method_exists($controller_object, $controller_method) ) {
             // Controller's action may return a view path
@@ -45,10 +40,7 @@ class App {
             throw new Exception('Method '.$controller_method.' of class '.$controller_class.' does not exist.');
         }
 
-//        $backgrounds_obj = new BackgroundsController();
-//        $backgrounds_res = $backgrounds_obj->admin_edit();
-//        $backgrounds_data = $backgrounds_obj->getData();
-
+   
         $layout_path = VIEWS_PATH.DS.$layout.'.html';
         $layout_view_object = new View(compact('content', 'view_data'), $layout_path);
         echo $layout_view_object->render();

@@ -20,13 +20,13 @@ class Category extends Model{
         $parent_id = $data['parent_id'] ? (int)$data['parent_id'] : '0';
         $category_name = $this->db->escape($data['category_name']);
 
-        if ( !$id) {  // Add new record
+        if ( !$id) {  
             $sql = "
                 insert into categories
                   set parent_id = '{$parent_id}',
                      category_name = '{$category_name}'
             ";
-        } else {  // Update existing record
+        } else {  
             $sql = "
                 update categories
                   set category_name = '{$category_name}'

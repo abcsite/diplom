@@ -1,11 +1,11 @@
-<h3>Messages</h3><br/>
-<table class="table table-striped" style="width: 100%;">
+<h1>Сообщения</h1><br/>
+<table class="table table-default" style="width: 100%;background: #fff; ">
     <tr style="font-weight: bolder; ">
         <td style="width: 5%;">#</td>
-        <td style="width: 10%;">Name</td>
+        <td style="width: 10%;">Имя</td>
         <td style="width: 20%;">Email</td>
-        <td style="">Message</td>
-        <td style="width: 120px;" align="left">Actions</td>
+        <td style="">Сообщение</td>
+        <td style="width: 200px;" align="left">Действия</td>
     </tr>
     <?php foreach( $data as $item) { ?>
         <tr>
@@ -14,8 +14,8 @@
             <td><?= $item['email'] ?></td>
             <td><?= $item['message'] ?></td>
             <td align="left">
-                <a href="/admin/contacts/edit/<?= $item['id'] ?>"><button class="btn btn-sm btn-primary">edit</button></a>
-                <a href="/admin/contacts/delete/<?= $item['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-warning">delete</button></a>
+                <a href="/admin/contacts/edit/<?= $item['id'] ?>"><button class="btn btn-sm btn-default">редактировать</button></a>
+                <a href="/admin/contacts/delete/<?= $item['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-default">удалить</button></a>
             </td>
         </tr>
     <?php } ?>

@@ -12,14 +12,14 @@ class Message extends  Model {
         $email = $this->db->escape($data['email']);
         $message = $this->db->escape($data['message']);
 
-        if ( !$id) {  // Add new record
+        if ( !$id) {  
             $sql = "
                 insert into messages
                   set name = '{$name}',
                       email = '{$email}',
                       message = '{$message}'
             ";
-        } else {  // Update existing record
+        } else { 
             $sql = "
                 update messages
                   set name = '{$name}',
