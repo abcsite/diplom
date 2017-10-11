@@ -19,14 +19,21 @@ class HomeController extends Controller
         $data_module_articles['filter']['order_by'][] = '-a.date_published';
         $data_module_articles['filter']['order_by'][] = '-a.title';
 
-        $module_articles_list = new ModuleArticlesListController($data_module_articles);
+        $module_articles_list = new Module_articles_listController($data_module_articles);
         $articles_list_data = $module_articles_list->get_articles_filter();
         $this->data['module_articles_list'] = $module_articles_list->get_view( $articles_list_data );
 
-        /* Если пользователем выбрана категория , передаем ее название в заголовок страницы */
-        if ($_GET['categ'] && count($_GET['categ']) === 1) {
-            $categ = $module_articles_list->getModel()->getCategoryByIds($_GET['categ']);
-            $this->data['selected_categ'] = $categ[0]['category_name'];
+        /* Если пользователем выбрана категория , передаем ее и родительские категории на страницу (для создания "хлебных крошек") */
+        if ( isset($_GET['categ']) && is_array($_GET['categ']) && count($_GET['categ']) === 1) {
+            
+            $categories_all = $this->model->getCategList();
+            $parents_by_category_id = structure_to_line($categories_all, $options = ['begin_id' => (int)$_GET['categ'][0], 'nested_level' => 0, 'field_id' => 'parent_id', 'field_id_parent' => 'id']);
+
+            $hornav_categories = [];
+            foreach ($parents_by_category_id as $parent_categ) {
+                $hornav_categories[] = $parent_categ;
+            }
+            $this->data['selected_categ'] = array_reverse($hornav_categories); 
         }
 
         /* Для списка статей получаем список имен каждого первого изображения в статье (для вывода в слайдере) */
@@ -57,7 +64,7 @@ class HomeController extends Controller
         $data_module_articles_top_day['filter']['limit_count'] = 10;
         $data_module_articles_top_day['filter']['limit_offset'] = 0;
 
-        $module_articles_top_day = new ModuleArticlesListController($data_module_articles_top_day);
+        $module_articles_top_day = new Module_articles_listController($data_module_articles_top_day);
         $data_top_day = $module_articles_top_day->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за неделю в правой части главной страницы */
@@ -68,7 +75,7 @@ class HomeController extends Controller
         $data_module_articles_top_week['filter']['limit_count'] = 10;
         $data_module_articles_top_week['filter']['limit_offset'] = 0;
 
-        $module_articles_top_week = new ModuleArticlesListController($data_module_articles_top_week);
+        $module_articles_top_week = new Module_articles_listController($data_module_articles_top_week);
         $data_top_week = $module_articles_top_week->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за месяц в правой части главной страницы */
@@ -79,7 +86,7 @@ class HomeController extends Controller
         $data_module_articles_top_month['filter']['limit_count'] = 10;
         $data_module_articles_top_month['filter']['limit_offset'] = 0;
 
-        $module_articles_top_month = new ModuleArticlesListController($data_module_articles_top_month);
+        $module_articles_top_month = new Module_articles_listController($data_module_articles_top_month);
         $data_top_month = $module_articles_top_month->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за все время в правой части страницы статьи  */
@@ -89,7 +96,7 @@ class HomeController extends Controller
         $data_module_articles_top_all['filter']['limit_count'] = 10;
         $data_module_articles_top_all['filter']['limit_offset'] = 0;
 
-        $module_articles_top_all = new ModuleArticlesListController( $data_module_articles_top_all );
+        $module_articles_top_all = new Module_articles_listController( $data_module_articles_top_all );
         $data_top_all = $module_articles_top_all->get_articles_filter();
 
 

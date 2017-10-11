@@ -81,11 +81,11 @@ class ArticlesController extends Controller
         $data_module_articles['filter']['order_by'][] = '-a.date_published';
         $data_module_articles['filter']['order_by'][] = '-a.title';
 
-        $module_articles_list = new ModuleArticlesListController($data_module_articles);
+        $module_articles_list = new Module_articles_listController($data_module_articles);
         $this->data['module_articles_list'] = $module_articles_list->get_view();
 
         /* Если выбрана категория , передаем ее название в заголовок страницы */
-        if ($_GET['categ'] && count($_GET['categ']) === 1) {
+        if ( isset($_GET['categ']) && is_array($_GET['categ']) && count($_GET['categ']) === 1) {
             $categ = $module_articles_list->getModel()->getCategoryByIds($_GET['categ']);
             $this->data['selected_categ'] = $categ[0]['category_name'];
         }
@@ -104,7 +104,7 @@ class ArticlesController extends Controller
         $data_module_articles_top_day['filter']['limit_count'] = 10;
         $data_module_articles_top_day['filter']['limit_offset'] = 0;
 
-        $module_articles_top_day = new ModuleArticlesListController($data_module_articles_top_day);
+        $module_articles_top_day = new Module_articles_listController($data_module_articles_top_day);
         $data_top_day = $module_articles_top_day->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за неделю в правой части страницы поиска  */
@@ -115,7 +115,7 @@ class ArticlesController extends Controller
         $data_module_articles_top_week['filter']['limit_count'] = 10;
         $data_module_articles_top_week['filter']['limit_offset'] = 0;
 
-        $module_articles_top_week = new ModuleArticlesListController($data_module_articles_top_week);
+        $module_articles_top_week = new Module_articles_listController($data_module_articles_top_week);
         $data_top_week = $module_articles_top_week->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за месяц в правой части страницы поиска  */
@@ -126,7 +126,7 @@ class ArticlesController extends Controller
         $data_module_articles_top_month['filter']['limit_count'] = 10;
         $data_module_articles_top_month['filter']['limit_offset'] = 0;
 
-        $module_articles_top_month = new ModuleArticlesListController($data_module_articles_top_month);
+        $module_articles_top_month = new Module_articles_listController($data_module_articles_top_month);
         $data_top_month = $module_articles_top_month->get_articles_filter();
 
         /* Задаем параметры для модуля для получения списка ТОП-новостей за все время в правой части страницы статьи  */
@@ -136,7 +136,7 @@ class ArticlesController extends Controller
         $data_module_articles_top_all['filter']['limit_count'] = 10;
         $data_module_articles_top_all['filter']['limit_offset'] = 0;
 
-        $module_articles_top_all = new ModuleArticlesListController( $data_module_articles_top_all );
+        $module_articles_top_all = new Module_articles_listController( $data_module_articles_top_all );
         $data_top_all = $module_articles_top_all->get_articles_filter();
 
 
@@ -255,24 +255,24 @@ class ArticlesController extends Controller
         }
 
         $data['categories'] = $categories_line;
-        $data['article_categories'] = $article_categories_id;
+        $data['article_categories'] = $article_categories_id;   
         echo(json_encode($data));
         die;
     }
 
     public function admin_update_categ_ajax()
-    {
+    { 
         $categories_all = $this->model->getCategories();
         $categories_all_line = structure_to_line($categories_all, $options = ['begin_id' => 0, 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id']);
-        $article_categories_id = $_POST['article_categories'];
+        $article_categories_id = isset($_POST['article_categories']) ? $_POST['article_categories'] : [];
 
-        if ($_POST['operation'] == 'add') {
+        if ( isset($_POST['operation']) && $_POST['operation'] == 'add') {
             $article_categories_id[] = $this->params[0];
             $parents_categories_by_id = structure_to_line($categories_all, $options = ['begin_id' => $this->params[0], 'nested_level' => 0, 'field_id' => 'parent_id', 'field_id_parent' => 'id']);
             foreach ($parents_categories_by_id as $parent_categ) {
                 $article_categories_id[] = $parent_categ['id'];
             }
-        } elseif ($_POST['operation'] == 'delete') {
+        } elseif ( isset($_POST['operation']) && $_POST['operation'] == 'delete') {
             $childs_categories_by_id = structure_to_line($categories_all, $options = ['begin_id' => $this->params[0], 'nested_level' => 0, 'field_id' => 'id', 'field_id_parent' => 'parent_id']);
             $childs_categories_by_id = array_column($childs_categories_by_id, 'id');
             $childs_categories_by_id[] = $this->params[0];
@@ -283,12 +283,11 @@ class ArticlesController extends Controller
                     $new_categories_of_article[] = $categ;
             }
             $article_categories_id = $new_categories_of_article;
-//            $childs_categories_by_id[] = $this->params[0];
-//            $article_categories_id = array_diff($article_categories_id, $childs_categories_by_id);
         }
 
         $data['categories'] = $categories_all_line;
         $data['article_categories'] = $article_categories_id;
+
         echo(json_encode($data));
         die;
     }

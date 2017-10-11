@@ -15,7 +15,7 @@
             <td><b> <?= $article_data['comments_count']  ?> </b></td>
             <td align="left" >
                 <a href="/admin/comments/publish_all_in_article/<?= $article_data['id'] ?>" ><button class="btn btn-sm btn-default">Опубликовать все</button></a>
-                <a href="/admin/comments/delete_not_publish_comm_in_article/<?= $article_data['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-default">Удалить все непроверенные</button></a>
+                <a href="/admin/comments/delete_not_publish_comm_in_article/<?= $article_data['id'] ?>" onclick="return confirm('Удалить все непроверенные (неопубликованные) комментарии из этой статьи?');"><button class="btn btn-sm btn-default">Удалить все непроверенные</button></a>
             </td>
         </tr>
     <?php } ?>

@@ -1,11 +1,11 @@
 <?php
 
-class ModulArticlesList extends Model
+class Modul_articles_list extends Model
 {
     
     public function getCategoryByIds($ids)
     { 
-        if (is_array($ids)) {
+        if ( isset($ids) && is_array($ids)) {
             $in_ids = '';
             foreach ($ids as $id) {
                 $in_ids = $in_ids . ',' . $id;

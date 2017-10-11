@@ -47,11 +47,16 @@
 
     <?php } ?>
 
-
-    <?php if ( $data['selected_categ'] ) { ?>
-    <h1> <?= $data['selected_categ'] ?> </h1>
-    <?php } else { ?>
     <h1> Последние новости </h1>
+
+    <?php if ( isset($data['selected_categ']) && $data['selected_categ'] != '' ) {
+            $categ_arr = [];
+            foreach($data['selected_categ'] as $category) {
+                $categ_arr[] = '<a  href="/home/?categ[]=' . $category['id'] . '" >' . $category["category_name"] . '</a>';
+            }
+            $categ_str = implode( " > " , $categ_arr );
+        ?>
+        <p><?= $categ_str ?></p>
     <?php } ?>
 
     <hr>

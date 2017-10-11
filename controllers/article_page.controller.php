@@ -56,7 +56,7 @@ class Article_pageController extends Controller
             $data_module_articles_top_day['filter']['limit_count'] = 10;
             $data_module_articles_top_day['filter']['limit_offset'] = 0;
 
-            $module_articles_top_day = new ModuleArticlesListController( $data_module_articles_top_day );
+            $module_articles_top_day = new Module_articles_listController( $data_module_articles_top_day );
             $data_top_day = $module_articles_top_day->get_articles_filter();
 
             /* Задаем параметры для модуля для получения списка ТОП-новостей за неделю в правой части страницы статьи  */
@@ -67,7 +67,7 @@ class Article_pageController extends Controller
             $data_module_articles_top_week['filter']['limit_count'] = 10;
             $data_module_articles_top_week['filter']['limit_offset'] = 0;
 
-            $module_articles_top_week = new ModuleArticlesListController( $data_module_articles_top_week );
+            $module_articles_top_week = new Module_articles_listController( $data_module_articles_top_week );
             $data_top_week = $module_articles_top_week->get_articles_filter();
 
             /* Задаем параметры для модуля для получения списка ТОП-новостей за месяц в правой части страницы статьи  */
@@ -78,7 +78,7 @@ class Article_pageController extends Controller
             $data_module_articles_top_month['filter']['limit_count'] = 10;
             $data_module_articles_top_month['filter']['limit_offset'] = 0;
 
-            $module_articles_top_month = new ModuleArticlesListController( $data_module_articles_top_month );
+            $module_articles_top_month = new Module_articles_listController( $data_module_articles_top_month );
             $data_top_month = $module_articles_top_month->get_articles_filter();
 
             /* Задаем параметры для модуля для получения списка ТОП-новостей за все время в правой части страницы статьи  */
@@ -88,7 +88,7 @@ class Article_pageController extends Controller
             $data_module_articles_top_all['filter']['limit_count'] = 10;
             $data_module_articles_top_all['filter']['limit_offset'] = 0;
 
-            $module_articles_top_all = new ModuleArticlesListController( $data_module_articles_top_all );
+            $module_articles_top_all = new Module_articles_listController( $data_module_articles_top_all );
             $data_top_all = $module_articles_top_all->get_articles_filter();
 
             /* Получаем контент для правой части страницы статьи  */

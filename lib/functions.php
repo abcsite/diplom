@@ -5,6 +5,14 @@ function deb($data, $stop = 1) {
 if ($stop) {die;}
 }
 
+function my_exists($data) {
+    if ( isset($data)) {
+        return $data;
+    } else {
+        return '';
+    }
+}
+
 function my_format_date($data) {
     $begin_day = date('Y-m-d' , time() );
     $begin_day = strtotime($begin_day);
@@ -43,7 +51,7 @@ function structure_to_line($unstructured_arr, $options = ['begin_id' => 0, 'nest
                 $arr_childs = structure_to_line($unstructured_arr, $new_options );
                 if ( count($arr_childs) ) {
                     foreach ($arr_childs as $row_child) {
-                        $arr[] = $row_child;
+                        $arr[] = $row_child;  
                     }
                 }
             }

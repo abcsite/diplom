@@ -49,6 +49,7 @@ class Background extends Model
         } else {
             $content = file_get_contents( $uploadfile );
         }
+
         return $content;
     }
 

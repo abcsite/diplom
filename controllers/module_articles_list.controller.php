@@ -1,46 +1,43 @@
 <?php
 
-class ModuleArticlesListController extends Controller
+class Module_articles_listController extends Controller
 {
 
     public function __construct($data = array())
     {
         parent::__construct($data);
-        $this->model = new ModulArticlesList();
+        $this->model = new modul_articles_list();
     }
 
     public function get_articles_filter()
     {
         $filter = [];
 
-        if ($this->data['filter']['to_page']) {
+        if ( isset($this->data['filter']['filter_url']) && $this->data['filter']['filter_url'] != '') {
+            $filter = $this->data['filter']['filter_url'];
+        } else {
+            $filter = $this->data['filter'];
+
+            $filter_url_arr = $this->data['filter'];
+            unset($filter_url_arr['to_page']);
+            $filter_url = http_build_query($filter_url_arr);
+
+            $this->data['filter']['filter_url'] = $filter_url;
+        }
+
+        if ( isset($this->data['filter']['to_page']) && $this->data['filter']['to_page'] != '' ) {
             $currentPage = $this->data['filter']['to_page'];
         } else {
             $currentPage = 1;
         }
 
-        if ($this->data['filter']['filter_url']) {
-            $filter = $this->data['filter']['filter_url'];
-        } else {
-            $filter = $this->data['filter'];
-
-            $filter_url_arr = [
-                'categ' => $this->data['filter']['categ'],
-                'tags' => $this->data['filter']['tags'],
-                'date_min' => $this->data['filter']['date_min'],
-                'date_max' => $this->data['filter']['date_max']
-            ];
-            $filter_url = http_build_query($filter_url_arr);
-            $this->data['filter']['filter_url'] = $filter_url;
-        }
-
-        if ($this->data['filter']['itemsPerPage']) {
+        if ( isset($this->data['filter']['itemsPerPage']) && $this->data['filter']['itemsPerPage'] != '' ) {
             $itemsPerPage = $this->data['filter']['itemsPerPage'];
         } else {
             $itemsPerPage = Config::get('pagination_count_per_page');
         }
 
-        if ($this->data['filter']['limit_count'] && $this->data['filter']['limit_offset'])  {
+        if ( isset($this->data['filter']['limit_count']) && isset($this->data['filter']['limit_offset']) )  {
             $filter['limit_count'] = $this->data['filter']['limit_count'];
             $filter['limit_offset'] = $this->data['filter']['limit_offset'];
         } else {
@@ -63,7 +60,8 @@ class ModuleArticlesListController extends Controller
         if ($article_list) {
             $this->data['articles'] = $article_list;
 
-            $categories = $this->model->getCategoryByIds($this->data['filter']['categ']);
+            $filter_categ_list = ( isset($this->data['filter']['categ']) ) ? $this->data['filter']['categ'] : null;
+            $categories = $this->model->getCategoryByIds($filter_categ_list);
             $this->data['filter']['categ'] = $categories;
         }
        

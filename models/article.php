@@ -267,6 +267,19 @@ class Article extends Model
         }
         return $this->db->query($sql);
     }
+    
+    
+    
+    public function demo_mode_save($date_published, $id = null)
+    {
+        $sql = "
+            update articles
+              set date_published = '{$date_published}'
+              where id = {$id}
+        ";
+        
+        return $this->db->query($sql);
+    }
 
     
     

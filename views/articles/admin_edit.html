@@ -1,4 +1,4 @@
-<?php if ($data['article']) { ?>
+<?php if ( isset($data['article']) ) { ?>
     <h1>Редактировать статью:</h1>
     <p><?=$data['article']['id']?> - <?=$data['article']['title']?></p>
 <?php } else { ?>
@@ -9,7 +9,7 @@
 <form id="article_form" method="post" action="" enctype="multipart/form-data"   style="width: 900px;">
     <p>
         <input type="submit" class="btn btn-success" value="Сохранить"  style="width: 100px;" />&nbsp;
-        <?php if ($data['article']['id']) { ?>
+        <?php if ( isset($data['article']['id']) ) { ?>
         <a href="/admin/articles/delete/<?= $data['article']['id'] ?>"  class="btn btn-success"  onclick="return confirm('Вы действительно хотите удалить эту статью?');" >Удалить статью</a>&nbsp;
         <a href="/article_page/view/<?= $data['article']['id'] ?>"  class="btn btn-success" >Просмотреть статью</a>&nbsp;
         <a href="/admin/articles/edit/"  class="btn btn-success" >Новая статья</a>&nbsp;
@@ -27,35 +27,33 @@
         </ul>
 
         <div id="tabs-1">
-            <?php if ($data['article']['id']) { ?>
-            <input id="article_id" type="hidden" name="id" value="<?=$data['article']['id']?>"/>
-            <?php } ?>
-            <input type="hidden" id="date_created" name="date_created" value="<?=$data['article']['date_created']?>"
+            <input id="article_id" type="hidden" name="id" value="<?= isset($data['article']['id']) ? $data['article']['id'] : '' ?>"/>
+            <input type="hidden" id="date_created" name="date_created" value="<?= isset($data['article']['date_created']) ? $data['article']['date_created'] : ''  ?>"
                    class="form-control"/>
             <input type="hidden" id="date_published" name="date_published"
-                   value="<?=$data['article']['date_published']?>"
+                   value="<?= isset($data['article']['date_published']) ? $data['article']['date_published'] : ''  ?>"
                    class="form-control"/>
             <input type="hidden" id="is_published_old" name="is_published_old"
-                   value="<?=$data['article']['is_published']?>"
+                   value="<?= isset($data['article']['is_published']) ? $data['article']['is_published'] : ''  ?>"
                    class="form-control"/>
 
             <div class="form-group">
                 <label for="is_published">Опубликовано? </label>
                 <input type="checkbox" id="is_published"
-                       name="is_published" <?php if ( $data['article']['is_published'] ) { ?>
+                       name="is_published" <?php if ( isset($data['article']['is_published']) && $data['article']['is_published'] == 1 ) { ?>
                 checked="checked" <?php } ?> />
             </div>
             <div class="form-group">
                 <label for="title">Название</label>
-                <input type="text" id="title" name="title" value="<?=$data['article']['title']?>" class="form-control"/>
+                <input type="text" id="title" name="title" value="<?= isset($data['article']['title']) ? $data['article']['title'] : ''  ?>" class="form-control"/>
             </div>
             <div class="form-group">
                 <label for="description">Описание</label>
-                <textarea  id="description" name="description" class="form-control" rows="3"><?=$data['article']['description'] ?></textarea>
+                <textarea  id="description" name="description" class="form-control" rows="3"><?= isset($data['article']['description']) ? $data['article']['description'] : ''   ?></textarea>
             </div>
             <div class="form-group">
                 <label for="author">Автор</label>
-                <input type="text" id="author" name="author" value="<?=$data['article']['author']?>"
+                <input type="text" id="author" name="author" value="<?= isset($data['article']['author']) ? $data['article']['author'] : ''  ?>"
                        class="form-control"/>
             </div>
 
@@ -65,7 +63,7 @@
         <div id="tabs-2">
             <div class="form-group">
                 <label for="text">Для добавления и редактирования изображений воспользуйтесь меню "Insert -> Image -> Upload"</label>
-                <textarea id="text" name="text" class="form-control" rows="15"><?=$data['article']['text']?></textarea>
+                <textarea id="text" name="text" class="form-control" rows="15"><?= isset( $data['article']['text']) ?  $data['article']['text'] : '' ?></textarea>
             </div>
         </div>
 
@@ -73,7 +71,7 @@
         <div id="tabs-3">
             <div class="form-group">
                 <label for="tags">Теги ( ',' - разделитель тегов ):</label>
-                <textarea id="tags" name="tags" class="form-control"><?=$data['article']['tags']?></textarea>
+                <textarea id="tags" name="tags" class="form-control"><?= isset( $data['article']['tags']) ?  $data['article']['tags'] : '' ?></textarea>
             </div>
         </div>
 
@@ -124,7 +122,7 @@
 
         var data = {};
         var uri = '/admin/articles/categories_get_ajax/';
-        if (article_id) {
+        if (article_id != '') {
             uri = uri  + article_id + '/' ;
         }
         myAjax(uri, data, categoriesReturn, categoriesReturnErr);
@@ -139,7 +137,6 @@
             var article_data = JSON.parse(data);
             var categories = article_data['categories'];
             var article_categories = article_data['article_categories'];
-
             var categoriesLength = categories.length;
 
             for (i = 0; i < categoriesLength; i++) {
@@ -184,7 +181,8 @@
                 var data = {operation : 'add',
                             article_categories: article_categories,
                             categories: categories } ;
-                if (article_id) {
+
+                if (article_id != '') {
                     var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/' + article_id + '/';
                 } else {
                     var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/' ;
@@ -222,6 +220,7 @@
 
 
 <script>
+    /* Настройки для плагина TinyMCE  ( WYSIWYG редактор ) */
     tinymce.init({
         selector:'textarea#text',
         inline: false,
@@ -253,7 +252,7 @@
 
                 xhr = new XMLHttpRequest();
                 xhr.withCredentials = false;
-                xhr.open('POST', '/admin/articles/tinymce_upload_image_to_article/<?php echo $data['article']['id'] ? $data['article']['id'] : '-9' ; ?>/');
+                xhr.open('POST', '/admin/articles/tinymce_upload_image_to_article/<?php echo isset($data['article']['id']) ? $data['article']['id'] : '-9' ; ?>/');
 
                 xhr.onload = function() {
                     var json;

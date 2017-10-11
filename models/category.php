@@ -17,7 +17,7 @@ class Category extends Model{
         }
 
         $id = (int)$id;
-        $parent_id = $data['parent_id'] ? (int)$data['parent_id'] : '0';
+        $parent_id = isset($data['parent_id']) ? (int)$data['parent_id'] : '0';
         $category_name = $this->db->escape($data['category_name']);
 
         if ( !$id) {  

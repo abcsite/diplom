@@ -1,6 +1,10 @@
 <?php
 
+
 Config::set('site_name','pro100news');
+
+Config::set('site_mode','demo');    /* В этом режиме с определенной периодичностью будут автоматически обновлятся даты пупликаций статей */
+//Config::set('site_mode','work');
 
 Config::set('languages', array('en','fr'));
 

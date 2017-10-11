@@ -25,6 +25,8 @@ class UsersController extends  Controller {
                 } else {
                     Router::redirect('/home/');
                 }
+            } else {
+                Session::setFlash('Неверный логин или пароль!');
             }
         }
     }
@@ -91,7 +93,7 @@ class UsersController extends  Controller {
             $validation = new Validation( App::$db );
             $valid_data = $validation->validate( $_POST, $options);
 
-            if ( !count( $valid_data['err_messages'] )) {
+            if ( !isset($valid_data['err_messages']) || !count( $valid_data['err_messages'] )) {
                 
                 $result_check = $this->model->register( $valid_data['data'] );
 
@@ -107,6 +109,12 @@ class UsersController extends  Controller {
             $this->data['valid_errors'] = $valid_data['err_messages'];
             $this->data['hide_html_element'] = '';
             $this->data['form_data'] = $_POST;
+
+        } else {
+            $this->data['hide_html_element'] = '';
+            $this->data['form_data']['login'] = '';
+            $this->data['form_data']['email'] = '';
+            $this->data['form_data']['password'] = '';
         }
     }
 

@@ -11,7 +11,7 @@
             <td><b><a href="/article_page/view/<?= $article_data['id']  ?>" ><?= $article_data['id']  ?> -- <?= $article_data['title'] ?> </a></b></td>
             <td align="right" style="width: 200px;">
                 <a href="/admin/articles/edit/<?= $article_data['id'] ?>" ><button class="btn btn-sm btn-default">Редактировать</button></a>
-                <a href="/admin/articles/delete/<?= $article_data['id'] ?>" onclick1111="return confirmDelete();"><button class="btn btn-sm btn-default">Удалить</button></a>
+                <a href="/admin/articles/delete/<?= $article_data['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-default">Удалить</button></a>
             </td>
         </tr>
     <?php } ?>

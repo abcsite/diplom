@@ -14,7 +14,7 @@
 
             <div id="tabs-1">
                 <div class="articles_list__block">
-                    <?php  if ($data['top_day']['articles']) {
+                    <?php  if ( isset($data['top_day']['articles']) && is_array($data['top_day']['articles']) ) {
 
                     foreach( $data['top_day']['articles'] as $art ) { ?>
                     <div class="article_list__row">

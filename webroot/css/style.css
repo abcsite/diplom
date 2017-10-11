@@ -23,8 +23,13 @@ h4 {
 }
 
 .alert {
-    width: 400px;
-    max-width: 400px;
+    margin: 5px auto;
+    max-width: 100%;
+    text-align: center;
+    font-size: 17px;
+    color: red;
+    font-style: italic;
+    animation: pulsing 0.7s infinite ease-in-out alternate-reverse;
 }
 
 .hide {
@@ -277,6 +282,7 @@ h4 {
 #article_text_wrap {
     padding: 10px;
     border: 0px solid #ccc;
+    overflow: hidden;
 }
 
 #article_text_wrap img {
@@ -291,7 +297,8 @@ h4 {
 
 
 
-#text_ifr {
+#tinymce {
+
 }
 
 

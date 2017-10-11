@@ -18,6 +18,12 @@ class App {
 
         Lang::load(self::$router->getLanguage());
 
+        /* Обновление дат публикации статей для режима сайта 'demo' */
+        if (Config::get('site_mode') == 'demo' ) {
+            $demo_controller = new demo_site_modeController();
+            $demo_controller->articles_list();
+        }
+
         $controller_class = ucfirst(self::$router->getController()).'Controller';
         $controller_method = strtolower(self::$router->getMethodPrefix().self::$router->getAction());
 

@@ -4,7 +4,7 @@
 
 <div class="main_content">
     <?php  ?>
-    <?php if ( $data['selected_categ'] ) { ?>
+    <?php if ( isset($data['selected_categ']) && $data['selected_categ'] != '' ) { ?>
         <h3> <?= $data['selected_categ'] ?> </h3>
     <?php } else { ?>
         <h1> Список новостей </h1>

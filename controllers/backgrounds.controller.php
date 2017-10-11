@@ -16,7 +16,7 @@ class BackgroundsController extends Controller
 
         $result = true;
 
-        if($_POST) {
+        if ( isset($_POST[$bg_head_name . '_color']) && isset($_POST[$bg_page_name . '_color']) ) {
             $result = $this->model->set_bg_color($bg_head_name, $_POST[$bg_head_name . '_color']);
             $result = $result  && $this->model->set_bg_color($bg_page_name, $_POST[$bg_page_name . '_color']);
 
@@ -28,10 +28,10 @@ class BackgroundsController extends Controller
 
         }
         
-        if (!$_FILES[$bg_head_name]['name'] == '') {
+        if ( isset($_FILES[$bg_head_name]['name']) && $_FILES[$bg_head_name]['name'] != '') {
             $result = $this->model->replaceImages($bg_head_name, $_FILES[$bg_head_name]);
         }
-        if (!$_FILES[$bg_page_name]['name'] == '') {
+        if ( isset($_FILES[$bg_page_name]['name']) && $_FILES[$bg_page_name]['name'] != '') {
             $result = $this->model->replaceImages($bg_page_name, $_FILES[$bg_page_name]);
         }
         $this->data[$bg_head_name] = $bg_head_name;
